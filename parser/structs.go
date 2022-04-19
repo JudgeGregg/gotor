@@ -42,7 +42,6 @@ type Amount struct {
 	Altered      bool
 	Mitigated    bool
 	Mitigation   string
-	Kind         string
 	DamageType   string
 	DamageTypeID string
 	Absorbed     bool

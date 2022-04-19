@@ -207,19 +207,9 @@ func getAmount(amountField string) Amount {
 		amount.Critical = true
 		amountField = strings.ReplaceAll(amountField, "*", "")
 	}
-	//Charges
-	if strings.Contains(amountField, "{836045448953667}") {
-		quantity := strings.Split(amountField, " ")[0]
-		quantityInt, _ := strconv.ParseUint(quantity, 10, 64)
-		amount.Amount = quantityInt
-		amount.Effective = quantityInt
-		amount.Kind = "charges"
-		return amount
-	}
 	split := strings.Split(amountField, " ")
-	//Heal
+	//Heal, Charges or Energy
 	if len(split) <= 2 {
-		amount.Kind = "heal"
 		if len(split) == 1 {
 			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 			amount.Amount = quantityInt
@@ -236,7 +226,6 @@ func getAmount(amountField string) Amount {
 	}
 	//Reflected Damage
 	if strings.Contains(amountField, "{836045448953649}") {
-		amount.Kind = "damage"
 		if len(split) == 4 {
 			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 			amount.Amount = quantityInt
@@ -262,29 +251,29 @@ func getAmount(amountField string) Amount {
 	}
 	//Damage
 	if len(split) == 3 {
-		amount.Kind = "damage"
 		if strings.Contains(amountField, "{836045448945505}") {
-			//Dodge
 			amount.Mitigated = true
 			amount.Mitigation = "dodge"
 			amount.Amount = 0
 			amount.Effective = 0
 		} else if strings.Contains(amountField, "{836045448945503}") {
-			//Parry
 			amount.Mitigated = true
 			amount.Mitigation = "parry"
 			amount.Amount = 0
 			amount.Effective = 0
 		} else if strings.Contains(amountField, "{836045448945502}") {
-			//Miss
 			amount.Mitigated = true
 			amount.Mitigation = "miss"
 			amount.Amount = 0
 			amount.Effective = 0
 		} else if strings.Contains(amountField, "{836045448945507}") {
-			//Resist
 			amount.Mitigated = true
 			amount.Mitigation = "resist"
+			amount.Amount = 0
+			amount.Effective = 0
+		} else if strings.Contains(amountField, "{836045448945506}") {
+			amount.Mitigated = true
+			amount.Mitigation = "immune"
 			amount.Amount = 0
 			amount.Effective = 0
 		} else {
@@ -301,7 +290,6 @@ func getAmount(amountField string) Amount {
 	}
 	if len(split) == 4 {
 		//Regular Damage Altered
-		amount.Kind = "damage"
 		amount.Altered = true
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		alteredQuantity := strings.ReplaceAll(split[1], "~", "")
@@ -317,7 +305,6 @@ func getAmount(amountField string) Amount {
 	//Bubbled Damage
 	//{836045448945511} == absorbed
 	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, "{836045448945511}") {
-		amount.Kind = "damage"
 		if strings.Contains(amountField, "{836045448945509}") {
 			//Shield
 			amount.Altered = true
@@ -350,7 +337,6 @@ func getAmount(amountField string) Amount {
 	}
 	//Shield but no bubble
 	if strings.Contains(amountField, "{836045448945511}") {
-		amount.Kind = "damage"
 		amount.Mitigated = true
 		amount.Mitigation = "shield"
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
@@ -364,7 +350,6 @@ func getAmount(amountField string) Amount {
 	}
 	//Shield but no absorb, bug ?
 	if strings.Contains(amountField, "{836045448945509}") {
-		amount.Kind = "damage"
 		amount.Mitigated = true
 		amount.Mitigation = "shield"
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
