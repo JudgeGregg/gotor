@@ -3,13 +3,14 @@ package parser
 import "time"
 
 type Record struct {
-	DateTime time.Time
-	Actor    Actor
-	Target   Target
-	Ability  Ability
-	Effect   Effect
-	Amount   Amount
-	Threat   uint64
+	LineNumber int
+	DateTime   time.Time
+	Actor      Actor
+	Target     Target
+	Ability    Ability
+	Effect     Effect
+	Amount     Amount
+	Threat     uint64
 }
 
 type Actor struct {

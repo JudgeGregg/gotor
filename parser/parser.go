@@ -2,7 +2,6 @@ package parser
 
 import (
 	"bufio"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -10,7 +9,8 @@ import (
 
 //FIXME effect
 
-func Parse(s string) {
+func Parse(s string) []Record {
+	records := []Record{}
 	reader := strings.NewReader(s)
 	fileScanner := bufio.NewScanner(reader)
 	fileScanner.Split(bufio.ScanLines)
@@ -18,9 +18,11 @@ func Parse(s string) {
 	for fileScanner.Scan() {
 		index++
 		line := fileScanner.Text()
-		fmt.Println(index)
-		getRecord(line)
+		record := getRecord(line)
+		record.LineNumber = index
+		records = append(records, record)
 	}
+	return records
 }
 
 func getRecord(line string) Record {
@@ -59,14 +61,6 @@ func getRecord(line string) Record {
 	effectField := fields[4]
 	effect := getEffect(effectField)
 	record := Record{DateTime: time_, Actor: actor, Target: target, Ability: ability, Effect: effect, Amount: amount, Threat: threat}
-	//fmt.Println("TIME: ", time_)
-	//fmt.Println("ACTOR: ", actor)
-	//fmt.Println("TARGET: ", target)
-	//fmt.Println("ABILITY: ", ability)
-	//fmt.Println("EFFECT: ", effect)
-	//fmt.Println("FINAL: ", finalField)
-	//fmt.Println("AMOUNT: ", amount)
-	//fmt.Println("THREAT: ", threat)
 	return record
 }
 
@@ -189,7 +183,6 @@ func getEffect(effectField string) Effect {
 }
 
 func getAmount(amountField string) Amount {
-	fmt.Println(amountField)
 	amount := Amount{}
 	if amountField == "" {
 		return amount
