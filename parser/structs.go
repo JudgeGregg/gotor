@@ -50,3 +50,13 @@ type Amount struct {
 	Amount       uint64
 	Effective    uint64
 }
+
+type Raid struct {
+	Pulls  []Pull
+	InPull bool
+}
+
+type Pull struct {
+	StartTime time.Time
+	EndTime   time.Time
+}
