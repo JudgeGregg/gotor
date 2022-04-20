@@ -2,6 +2,7 @@ package parser
 
 import (
 	"testing"
+	"time"
 )
 
 var recordTestMap = map[string]Record{
@@ -18,6 +19,8 @@ var amountTestMap = map[string]Amount{
 	`0 -dodge {836045448945505}`:  {Mitigated: true, Mitigation: "dodge", Amount: 0, Effective: 0},
 	`0 -immune {836045448945506}`: {Mitigated: true, Mitigation: "immune", Amount: 0, Effective: 0},
 }
+
+var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(0, 1, 1, 21, 39, 27, 720000000, time.UTC)}
 
 func TestGetRecord(t *testing.T) {
 	for line, result := range recordTestMap {
@@ -50,6 +53,16 @@ func TestGetAmount(t *testing.T) {
 		amount := getAmount(line)
 		if amount != result {
 			t.Logf("Invalid amount: %v is not %v", amount, result)
+			t.Fail()
+		}
+	}
+}
+
+func TestGetTime(t *testing.T) {
+	for line, result := range timeTestMap {
+		time_ := getTime(line)
+		if time_ != result {
+			t.Logf("Invalid time: %v is not %v", time_, result)
 			t.Fail()
 		}
 	}
