@@ -37,6 +37,8 @@ type Effect struct {
 	EventID  string
 	Action   string
 	ActionID string
+	Spec     string
+	SpecID   string
 }
 
 type Amount struct {

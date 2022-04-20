@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-//FIXME effect
-
 func Parse(s string) []Record {
 	records := []Record{}
 	reader := strings.NewReader(s)
@@ -31,7 +29,7 @@ func getRecord(line string) Record {
 	var amount Amount
 	split := strings.Split(line, " <")
 	if len(split) > 1 {
-		threatField := strings.ReplaceAll(split[1], ">", "")
+		threatField := strings.Trim(split[1], ">")
 		threat = getThreat(threatField)
 		line = split[0]
 	}
@@ -39,7 +37,7 @@ func getRecord(line string) Record {
 	if len(split) > 1 {
 		amountField := split[1]
 		// Trim last ")"
-		amountField = amountField[:len(amountField)-1]
+		amountField = strings.Trim(amountField, ")")
 		amount = getAmount(amountField)
 		line = split[0]
 	}
@@ -158,27 +156,38 @@ func getAbility(abilityField string) Ability {
 }
 
 func getEffect(effectField string) Effect {
+	var spec string
+	var specID string
 	effect := Effect{}
 	if effectField == "" {
 		return effect
 	}
-	effectSplit := strings.Split(effectField, "}: ")
+	effectSplit := strings.Split(effectField, "}")
 	event := effectSplit[0]
 	action := effectSplit[1]
 	eventSplit := strings.Split(event, "{")
 	event = eventSplit[0]
+	event = strings.Trim(event, " :{}[]")
 	eventID := eventSplit[1]
+	eventID = strings.Trim(eventID, " :{}[]")
 	actionSplit := strings.Split(action, "{")
 	action = actionSplit[0]
+	action = strings.Trim(action, " :{}[]")
 	actionID := actionSplit[1]
-	actionID = strings.ReplaceAll(actionID, "}", "")
-	actionID = strings.ReplaceAll(actionID, "]", "")
-	event = strings.TrimSpace(event)
-	action = strings.TrimSpace(action)
+	actionID = strings.Trim(actionID, " :{}[]")
 	effect.Event = event
 	effect.EventID = eventID
 	effect.Action = action
 	effect.ActionID = actionID
+
+	if len(effectSplit) == 4 {
+		spec = effectSplit[2]
+		specSplit := strings.Split(spec, "{")
+		spec = strings.Trim(specSplit[0], " {}[]/")
+		specID = strings.Trim(specSplit[1], " {}[]")
+		effect.Spec = spec
+		effect.SpecID = specID
+	}
 	return effect
 }
 

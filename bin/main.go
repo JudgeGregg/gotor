@@ -12,7 +12,8 @@ import (
 )
 
 func main() {
-	file, _ := os.Open("combat_2022-04-16_21_23_12_979036.txt")
+	file, _ := os.Open("samples/sample1.txt")
+	//file, _ := os.Open("combat_2022-04-16_21_23_12_979036.txt")
 	wInUTF8 := transform.NewReader(file, charmap.ISO8859_1.NewDecoder())
 	str, _ := io.ReadAll(wInUTF8)
 	records := parser.Parse(string(str))
