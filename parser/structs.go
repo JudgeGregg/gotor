@@ -61,13 +61,37 @@ type Raid struct {
 
 type Pull struct {
 	StartTime  time.Time
-	EndTime    time.Time
+	StopTime   time.Time
 	Players    []Player
-	DamageDone map[string]uint64
+	DamageDone map[string]DamageDict
 	HealDone   map[string]uint64
+	ThreatDone map[string]uint64
 }
 
 type Player struct {
 	Name string
 	ID   string
+}
+
+type DamageDict struct {
+	ID               string
+	Name             string
+	TargetDamageDict map[string]TargetDamageDict
+}
+
+type TargetDamageDict struct {
+	ID      string
+	Name    string
+	Ability map[string]AbilityDict
+}
+
+type AbilityDict struct {
+	ID            string
+	Name          string
+	Amount        uint64
+	Missed        uint64
+	Resisted      uint64
+	Immune        uint64
+	DodgedParried uint64
+	Shielded      uint64
 }
