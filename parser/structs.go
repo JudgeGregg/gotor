@@ -54,11 +54,20 @@ type Amount struct {
 }
 
 type Raid struct {
-	Pulls  []Pull
-	InPull bool
+	Pulls       []Pull
+	InPull      bool
+	CurrentPull *Pull
 }
 
 type Pull struct {
-	StartTime time.Time
-	EndTime   time.Time
+	StartTime  time.Time
+	EndTime    time.Time
+	Players    []Player
+	DamageDone map[string]uint64
+	HealDone   map[string]uint64
+}
+
+type Player struct {
+	Name string
+	ID   string
 }
