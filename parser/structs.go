@@ -54,35 +54,33 @@ type Amount struct {
 }
 
 type Raid struct {
-	Pulls       []Pull
-	InPull      bool
-	CurrentPull *Pull
+	Pulls              []Pull
+	InPull             bool
+	CurrentPull        *Pull
+	PlayersNumber      uint64
+	AlivePlayersNumber uint64
+	Difficulty         string
 }
 
 type Pull struct {
 	StartTime  time.Time
 	StopTime   time.Time
-	Players    []Player
-	DamageDone map[string]DamageDict
+	Target     string
+	DamageDone map[Actor]*DamageDict
 	HealDone   map[string]uint64
 	ThreatDone map[string]uint64
-}
-
-type Player struct {
-	Name string
-	ID   string
 }
 
 type DamageDict struct {
 	ID               string
 	Name             string
-	TargetDamageDict map[string]TargetDamageDict
+	TargetDamageDict map[string]*TargetDamageDict
 }
 
 type TargetDamageDict struct {
 	ID      string
 	Name    string
-	Ability map[string]AbilityDict
+	Ability map[string]*AbilityDict
 }
 
 type AbilityDict struct {
