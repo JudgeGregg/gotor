@@ -106,6 +106,11 @@ func getActor(actorField string) Actor {
 		name = strings.ReplaceAll(name, "#", "")
 		actor.Name = name
 		actor.ID = id
+		if strings.Contains(nameField, "/") {
+			companionName := strings.Split(nameField, "/")[1]
+			companionName = strings.Split(companionName, " {")[0]
+			actor.Name = name + " (" + companionName + ")"
+		}
 	} else {
 		actor.NPC = true
 		name := strings.SplitN(nameField, " {", 2)[0]
