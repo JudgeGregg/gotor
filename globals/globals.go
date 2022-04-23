@@ -46,6 +46,16 @@ var Targets = map[string]string{
 	"3152166692847616": "Vorgan the Volcano",
 	"3152158102913024": "Vorgan the Volcano",
 	"3152170987814912": "DN-314 Tunneler",
+	//Kaon Under Siege
+	"2762260971782144": "Commander Lk'graagth",
+	"2762269561716736": "Commander Lk'graagth",
+	"2762265266749440": "Commander Lk'graagth",
+	"2765357643202560": "Rakghoul Behemoth",
+	//False Emperor
+	"770963809501184":  "Darth Malgus",
+	"770955219566592":  "HK-47",
+	"1690314444111872": "Tregg the Destroyer",
+	"770959514533888":  "Jindo Krey",
 }
 
 var RaidStartDate = time.Time{}
