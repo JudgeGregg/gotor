@@ -56,7 +56,7 @@ func handleRecord(raid *parser.Raid, record parser.Record) {
 
 func handleDamage(raid *parser.Raid, record parser.Record) {
 	if !raid.InPull {
-		log.Println("DAMAGE NOT IN RAID", record.LineNumber)
+		//log.Println("DAMAGE NOT IN RAID", record.LineNumber)
 		return
 	}
 	if raid.CurrentPull.Target == "" {
@@ -134,8 +134,6 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.AlivePlayersNumber = raid.PlayersNumber
 		//start pull
 		raid.InPull = true
-		log.Printf("==============================")
-		log.Printf("Starting fight %s", raid.CurrentPull.StartTime)
 	}
 	if record.Effect.ActionID == globals.EXITCOMBATID && raid.InPull {
 		//stop pull
@@ -143,7 +141,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StopTime = record.DateTime
 		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 		showDamage(raid.CurrentPull)
-		log.Printf("Stopping fight exited %s", raid.CurrentPull.StopTime)
+		//log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 	if record.Effect.EventID == globals.AREAENTEREDID {
 		switch record.Effect.SpecID {
@@ -168,11 +166,12 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		//log.Printf("%s DEAD at %s\n", record.Target.Name, record.DateTime)
 		raid.AlivePlayersNumber -= 1
 		if raid.AlivePlayersNumber == 0 {
+			//stop pull, WIPE
 			raid.InPull = false
 			raid.CurrentPull.StopTime = record.DateTime
 			raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 			showDamage(raid.CurrentPull)
-			log.Printf("Stopping fight WIPE %s", raid.CurrentPull.StopTime)
+			//log.Printf("%d Stopping fight WIPE %s", record.LineNumber, raid.CurrentPull.StopTime)
 		}
 	}
 	if raid.InPull && record.Effect.ActionID == globals.REVIVEID && !record.Target.NPC {
@@ -185,6 +184,8 @@ func showDamage(pull *parser.Pull) {
 	if pull.Target == "" {
 		return
 	}
+	log.Printf("==============================")
+	log.Printf("STARTING FIGHT %s", pull.StartTime)
 	duration := pull.StopTime.Sub(pull.StartTime)
 	log.Println(duration)
 	log.Println(pull.Target)
@@ -199,9 +200,10 @@ func showDamage(pull *parser.Pull) {
 					totalDamage += float64(abilityDmgDict.Amount)
 				}
 			}
-			log.Println(player.Name, totalDamage, totalDamage/seconds)
+			log.Println(player.Name, totalDamage, "Total", totalDamage/seconds, "DPS")
 		}
 	}
+	log.Printf("STOPPING FIGHT %s", pull.StopTime)
 }
 
 func checkPullTarget(raid *parser.Raid, record parser.Record) {
