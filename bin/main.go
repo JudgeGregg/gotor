@@ -16,10 +16,10 @@ import (
 
 func main() {
 
-	filename := os.Args[1]
-	_, filename = path.Split(filename)
+	argFile := os.Args[1]
+	_, filename := path.Split(argFile)
 	globals.RaidStartDate = getRaidStartDate(filename)
-	file, err := os.Open(filename)
+	file, err := os.Open(argFile)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
