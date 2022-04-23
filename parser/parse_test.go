@@ -23,6 +23,9 @@ var amountTestMap = map[string]Amount{
 
 var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(0, 1, 1, 21, 39, 27, 720000000, time.UTC)}
 
+var areaEnteredTestMap = map[string]Record{
+	`[23:25:48.788] [@Zangyef#686674938948221|(125.67,35.44,5.02,55.10)|(338278/338278)] [] [] [AreaEntered {836045448953664}: Karagga's Palace {833571547775669} 8 Player Veteran {836045448953652}] (he4002) <v7.0.0b>`: {Actor: Actor{Name: "Zangyef", ID: "686674938948221"}, Effect: Effect{Event: "AreaEntered", EventID: "836045448953664", Action: "Karagga's Palace", ActionID: "833571547775669", Spec: "8 Player Veteran", SpecID: "836045448953652"}}}
+
 func TestGetRecord(t *testing.T) {
 	for line, result := range recordTestMap {
 		record := getRecord(line)
@@ -64,6 +67,32 @@ func TestGetTime(t *testing.T) {
 		time_ := getTime(line)
 		if time_ != result {
 			t.Logf("Invalid time: %v is not %v", time_, result)
+			t.Fail()
+		}
+	}
+}
+
+func TestGetAreaEntered(t *testing.T) {
+	for line, result := range areaEnteredTestMap {
+		record := getRecord(line)
+		if record.Ability != result.Ability {
+			t.Logf("Invalid record ability: %v is not %v", record.Ability, result.Ability)
+			t.Fail()
+		}
+		if record.Actor != result.Actor {
+			t.Logf("Invalid record actor: %v is not %v", record.Actor, result.Actor)
+			t.Fail()
+		}
+		if record.Target != result.Target {
+			t.Logf("Invalid record target: %v is not %v", record.Target, result.Target)
+			t.Fail()
+		}
+		if record.Effect != result.Effect {
+			t.Logf("Invalid record effect: %v is not %v", record.Effect, result.Effect)
+			t.Fail()
+		}
+		if record.Threat != result.Threat {
+			t.Logf("Invalid record threat: %v is not %v", record.Threat, result.Threat)
 			t.Fail()
 		}
 	}
