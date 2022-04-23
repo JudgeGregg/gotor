@@ -21,7 +21,7 @@ var amountTestMap = map[string]Amount{
 	`0 -immune {836045448945506}`: {Mitigated: true, Mitigation: "immune", Amount: 0, Effective: 0},
 }
 
-var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(0, 1, 1, 21, 39, 27, 720000000, time.UTC)}
+var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(1, 1, 1, 21, 39, 27, 720000000, time.UTC)}
 
 var areaEnteredTestMap = map[string]Record{
 	`[23:25:48.788] [@Zangyef#686674938948221|(125.67,35.44,5.02,55.10)|(338278/338278)] [] [] [AreaEntered {836045448953664}: Karagga's Palace {833571547775669} 8 Player Veteran {836045448953652}] (he4002) <v7.0.0b>`: {Actor: Actor{Name: "Zangyef", ID: "686674938948221"}, Effect: Effect{Event: "AreaEntered", EventID: "836045448953664", Action: "Karagga's Palace", ActionID: "833571547775669", Spec: "8 Player Veteran", SpecID: "836045448953652"}}}
