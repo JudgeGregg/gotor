@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/JudgeGregg/gotor/globals"
 )
 
 func Parse(s string) []Record {
@@ -80,6 +82,12 @@ func getThreat(threat string) uint64 {
 func getTime(time_ string) time.Time {
 	timeField := strings.ReplaceAll(time_, "[", "")
 	res, _ := time.Parse("15:04:05", timeField)
+	year, month, day := globals.RaidStartDate.Date()
+	// time.Parse sets month and day to 1
+	res = res.AddDate(year, int(month)-1, day-1)
+	if res.Before(globals.RaidStartDate) {
+		res = res.AddDate(0, 0, 1)
+	}
 	return res
 }
 
