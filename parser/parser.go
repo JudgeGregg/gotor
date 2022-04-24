@@ -376,5 +376,5 @@ func getAmount(amountField string) Amount {
 		amount.DamageTypeID = damageTypeID
 		return amount
 	}
-	panic("foo")
+	panic("Parsing Error")
 }

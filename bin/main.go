@@ -123,6 +123,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 			//stop pull
 			return
 		}
+		//start pull
 		raid.CurrentPull = &parser.Pull{}
 		raid.CurrentPull.StartTime = record.DateTime
 		damageDone := make(map[parser.Actor]*parser.DamageDict)
@@ -132,8 +133,8 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.HealDone = healDone
 		raid.CurrentPull.ThreatDone = threatDone
 		raid.AlivePlayersNumber = raid.PlayersNumber
-		//start pull
 		raid.InPull = true
+		//log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
 	}
 	if record.Effect.ActionID == globals.EXITCOMBATID && raid.InPull {
 		//stop pull
