@@ -44,7 +44,7 @@ type Effect struct {
 type Amount struct {
 	Altered      bool
 	Mitigated    bool
-	Mitigation   string
+	Mitigation   uint64
 	DamageType   string
 	DamageTypeID string
 	Absorbed     bool
@@ -74,7 +74,7 @@ type Pull struct {
 type DamageDict struct {
 	ID               string
 	Name             string
-	TargetDamageDict map[string]*TargetDamageDict
+	TargetDamageDict map[Target]*TargetDamageDict
 }
 
 type TargetDamageDict struct {
@@ -84,12 +84,13 @@ type TargetDamageDict struct {
 }
 
 type AbilityDict struct {
-	ID            string
-	Name          string
-	Amount        uint64
-	Missed        uint64
-	Resisted      uint64
-	Immune        uint64
-	DodgedParried uint64
-	Shielded      uint64
+	ID           string
+	Name         string
+	Hits         uint64
+	Amount       uint64
+	Miss         uint64
+	Resist       uint64
+	Immune       uint64
+	DodgeOrParry uint64
+	Shield       uint64
 }
