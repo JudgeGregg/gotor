@@ -90,7 +90,42 @@ func handleHeal(raid *parser.Raid, record parser.Record) {
 	if record.Actor.Name == "" {
 		return
 	}
-	raid.CurrentPull.HealDone[record.Actor.Name] += record.Amount.Effective
+	actor := record.Actor
+	actorName := record.Actor.Name
+	actorID := record.Actor.ID
+	target := record.Target
+	targetID := record.Target.ID
+	targetName := record.Target.ID
+	abilityName := record.Ability.Name
+	abilityID := record.Ability.ID
+	abilityAmount := record.Amount.Effective
+	// Do we already know this actor ?
+	if healDict, ok := raid.CurrentPull.HealDone[actor]; ok {
+		targetHealDict := healDict.TargetHealDict
+		// Do we already know this target ?
+		if targetHeaDict, ok := targetHealDict[target]; ok {
+			// Do we already know this ability ?
+			if ability, ok := targetHeaDict.Ability[abilityName]; ok {
+				ability.Amount += abilityAmount
+				ability.Hits += 1
+			} else {
+				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+				targetHeaDict.Ability[abilityName] = ability
+			}
+		} else {
+			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+			targetHeaDict = &parser.TargetHealDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
+			targetHeaDict.Ability[abilityName] = ability
+			healDict.TargetHealDict[target] = targetHeaDict
+		}
+	} else {
+		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+		targetHeaDict := &parser.TargetHealDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
+		heaDict := &parser.HealDict{Name: actorName, ID: actorID, TargetHealDict: make(map[parser.Target]*parser.TargetHealDict)}
+		targetHeaDict.Ability[abilityName] = ability
+		heaDict.TargetHealDict[target] = targetHeaDict
+		raid.CurrentPull.HealDone[actor] = heaDict
+	}
 }
 
 func handleStartStop(raid *parser.Raid, record parser.Record) {

@@ -67,7 +67,7 @@ type Pull struct {
 	StopTime   time.Time
 	Target     string
 	DamageDone map[Actor]*DamageDict
-	HealDone   map[string]uint64
+	HealDone   map[Actor]*HealDict
 	ThreatDone map[string]uint64
 }
 
@@ -83,10 +83,23 @@ type TargetDamageDict struct {
 	Ability map[string]*AbilityDict
 }
 
+type HealDict struct {
+	ID             string
+	Name           string
+	TargetHealDict map[Target]*TargetHealDict
+}
+
+type TargetHealDict struct {
+	ID      string
+	Name    string
+	Ability map[string]*AbilityDict
+}
+
 type AbilityDict struct {
 	ID           string
 	Name         string
 	Hits         uint64
+	Critical     uint64
 	Amount       uint64
 	Miss         uint64
 	Resist       uint64
