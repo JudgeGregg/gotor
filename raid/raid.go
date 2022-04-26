@@ -38,39 +38,40 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 	if raid.CurrentPull.Target == "" {
 		checkPullTarget(raid, record)
 	}
-	actorPointer := record.Actor
+	actor := record.Actor
 	actorName := record.Actor.Name
 	actorID := record.Actor.ID
+	target := record.Target
 	targetName := record.Target.Name
 	targetID := record.Target.ID
 	abilityName := record.Ability.Name
 	abilityID := record.Ability.ID
 	abilityAmount := record.Amount.Effective
 	// Do we already know this actor ?
-	if actor, ok := raid.CurrentPull.DamageDone[actorPointer]; ok {
-		targetDamageDict := actor.TargetDamageDict
+	if actorDmgDict, ok := raid.CurrentPull.DamageDone[actor]; ok {
+		targetDamageDict := actorDmgDict.TargetDamageDict
 		// Do we already know this target ?
-		if target, ok := targetDamageDict[targetName]; ok {
+		if targetDmgDict, ok := targetDamageDict[target]; ok {
 			// Do we already know this ability ?
-			if ability, ok := target.Ability[abilityName]; ok {
+			if ability, ok := targetDmgDict.Ability[abilityName]; ok {
 				ability.Amount += abilityAmount
 			} else {
 				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
-				target.Ability[abilityName] = ability
+				targetDmgDict.Ability[abilityName] = ability
 			}
 		} else {
 			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
-			target = &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
-			target.Ability[abilityName] = ability
-			actor.TargetDamageDict[targetName] = target
+			targetDmgDict = &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
+			targetDmgDict.Ability[abilityName] = ability
+			actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		}
 	} else {
 		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
-		target := &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
-		actor := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[string]*parser.TargetDamageDict)}
-		target.Ability[abilityName] = ability
-		actor.TargetDamageDict[targetName] = target
-		raid.CurrentPull.DamageDone[actorPointer] = actor
+		targetDmgDict := &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
+		actorDmgDict := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[parser.Target]*parser.TargetDamageDict)}
+		targetDmgDict.Ability[abilityName] = ability
+		actorDmgDict.TargetDamageDict[target] = targetDmgDict
+		raid.CurrentPull.DamageDone[actor] = actorDmgDict
 	}
 }
 
@@ -138,7 +139,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull = &parser.Pull{}
 		raid.CurrentPull.StartTime = record.DateTime
 		damageDone := make(map[parser.Actor]*parser.DamageDict)
-		healDone := make(map[string]uint64)
+		healDone := make(map[parser.Actor]*parser.HealDict)
 		threatDone := make(map[string]uint64)
 		raid.CurrentPull.DamageDone = damageDone
 		raid.CurrentPull.HealDone = healDone
