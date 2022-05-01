@@ -46,6 +46,11 @@ var Targets = map[string]string{
 	"172496007036928":  "Professor Ley'arsha",
 	"2263129937412096": "The Beast of Vodall Kressh",
 	"1172951273570304": "Prophet of Vodal",
+	//False Emperor Veteran
+	"770963809501184":  "Darth Malgus",
+	"770955219566592":  "HK-47",
+	"1690314444111872": "Tregg the Destroyer",
+	"770959514533888":  "Jindo Krey",
 	//Athiss Master
 	"3158072272879616": "Professor Ley'arsha",
 	"3158119517519872": "The Beast of Vodall Kressh",
@@ -63,17 +68,38 @@ var Targets = map[string]string{
 	"2762269561716736": "Commander Lk'graagth",
 	"2762265266749440": "Commander Lk'graagth",
 	"2765357643202560": "Rakghoul Behemoth",
-	//False Emperor Veteran
-	"770963809501184":  "Darth Malgus",
-	"770955219566592":  "HK-47",
-	"1690314444111872": "Tregg the Destroyer",
-	"770959514533888":  "Jindo Krey",
 	//Taral V Master
 	"2531994890141696": "General Edikar",
 	//Cademimu Master
 	"3210672737353728": "Officer Xander",
 	"3210677032321024": "Captain Grimyk",
 	"3210659852451840": "General Ortol",
+	//Traitor Amongst the Chiss Master
+	"4128382694457344": "Guardian Droid",
+	"4135314771673088": "Syndic Zenta",
+	"4132209510318080": "Vaiss",
+	//Crisis on Umbara Master
+	"4111512062918656": "Shadow Assassin Elli-Vaa & Technician Canni",
+	"4111507767951360": "Shadow Assassin Elli-Vaa & Technician Canni",
+	"4112779078270976": "Umbaran Spider Tank",
+	"4112173487882240": "Vixian Mauler",
+	//The Battle of Ilum Master
+	"2511473536401408": "Drinda-Zel & Velasu Graege",
+	"2511490716270592": "Drinda-Zel & Velasu Graege",
+	"2511486421303296": "Krel Thak",
+	"2511469241434112": "Darth Serevin",
+	//The Red Reaper Master
+	"2482594176303104": "Lord Kherus",
+	"2482692960550912": "SV-3 Eradictor",
+	"1478800189685760": "Darth Ikoral",
+	//Depths of Manaan Master
+	"3505251659284480": "Saisiri",
+	"3505260249219072": "Ortuno",
+	"3505268839153664": "Stivastin",
+	"3506922401562624": "M2-AUX Foreman",
+	//Nathema Conspiracy Master
+	//Ruins of Nul Master
+	//Spirit of Vengeance Master
 }
 
 var RaidStartDate = time.Time{}
