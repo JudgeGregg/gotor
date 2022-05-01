@@ -200,13 +200,15 @@ func showDamage(pull *parser.Pull) {
 	log.Printf("==============================")
 	log.Printf("STARTING FIGHT %s", pull.StartTime)
 	duration := pull.StopTime.Sub(pull.StartTime)
+	seconds := duration.Seconds()
 	log.Println(duration)
 	log.Println(pull.Target)
 	log.Println("------------------------------")
-	seconds := duration.Seconds()
+	log.Println("DAMAGE DONE")
 
+	receivedMap := make(map[parser.Target]float64)
 	for player, dmgDict := range pull.DamageDone {
-		if !player.NPC {
+		if !player.NPC && player.Name != "" {
 			totalDamage := float64(0)
 			for _, targetDmgDict := range dmgDict.TargetDamageDict {
 				for _, abilityDmgDict := range targetDmgDict.Ability {
@@ -214,6 +216,32 @@ func showDamage(pull *parser.Pull) {
 				}
 			}
 			log.Println(player.Name, totalDamage, "Total", totalDamage/seconds, "DPS")
+		} else {
+			for target, targetDmgDict := range dmgDict.TargetDamageDict {
+				if !target.NPC {
+					for _, abilityDmgDict := range targetDmgDict.Ability {
+						receivedMap[target] += float64(abilityDmgDict.Amount)
+					}
+				}
+			}
+		}
+	}
+	log.Println("------------------------------")
+	log.Println("DAMAGE RECEIVED")
+	for target, amount := range receivedMap {
+		log.Println(target.Name, amount, "Total", amount/seconds, "DPS")
+	}
+	log.Println("------------------------------")
+	log.Println("HEAL DONE")
+	for player, healDict := range pull.HealDone {
+		if !player.NPC {
+			totalHeal := float64(0)
+			for _, targetHeaDict := range healDict.TargetHealDict {
+				for _, abilityDmgDict := range targetHeaDict.Ability {
+					totalHeal += float64(abilityDmgDict.Amount)
+				}
+			}
+			log.Println(player.Name, totalHeal, "Total", totalHeal/seconds, "HPS")
 		}
 	}
 	log.Printf("STOPPING FIGHT %s", pull.StopTime)
