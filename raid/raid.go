@@ -55,6 +55,31 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 			// Do we already know this ability ?
 			if ability, ok := targetDmgDict.Ability[abilityName]; ok {
 				ability.Amount += abilityAmount
+				ability.Hits += 1
+				if record.Amount.Mitigated {
+					switch record.Amount.Mitigation {
+					case globals.IMMUNE:
+						{
+							ability.Immune += 1
+						}
+					case globals.RESIST:
+						{
+							ability.Resist += 1
+						}
+					case globals.MISS:
+						{
+							ability.Miss += 1
+						}
+					case globals.DODGE_OR_PARRY:
+						{
+							ability.DodgeOrParry += 1
+						}
+					case globals.SHIELD:
+						{
+							ability.Shield += 1
+						}
+					}
+				}
 			} else {
 				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
 				targetDmgDict.Ability[abilityName] = ability
@@ -146,7 +171,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.ThreatDone = threatDone
 		raid.AlivePlayersNumber = raid.PlayersNumber
 		raid.InPull = true
-		//log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
+		log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
 	}
 	if record.Effect.ActionID == globals.EXITCOMBATID && raid.InPull {
 		//stop pull
@@ -154,7 +179,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StopTime = record.DateTime
 		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 		showDamage(raid.CurrentPull)
-		//log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
+		log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 	if record.Effect.EventID == globals.AREAENTEREDID {
 		switch record.Effect.SpecID {
@@ -194,7 +219,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 }
 
 func showDamage(pull *parser.Pull) {
-	if pull.Target == "" {
+	if pull.Target == "" && !globals.Debug {
 		return
 	}
 	log.Printf("==============================")
@@ -244,7 +269,9 @@ func showDamage(pull *parser.Pull) {
 			log.Println(player.Name, totalHeal, "Total", totalHeal/seconds, "HPS")
 		}
 	}
+	log.Println("------------------------------")
 	log.Printf("STOPPING FIGHT %s", pull.StopTime)
+	log.Printf("==============================")
 }
 
 func checkPullTarget(raid *parser.Raid, record parser.Record) {
