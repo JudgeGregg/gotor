@@ -1,7 +1,8 @@
 package raid
 
 import (
-	"io/ioutil"
+	"bufio"
+	"os"
 	"testing"
 	"time"
 
@@ -27,13 +28,24 @@ func TestGetPull(t *testing.T) {
 		},
 	}}}
 	for _, pullTest := range pullTestData {
-		content, err := ioutil.ReadFile(pullTest.file)
+		content, err := os.Open(pullTest.file)
+		fileScanner := bufio.NewScanner(content)
+		fileScanner.Split(bufio.ScanLines)
+		lines := make(chan string)
+		go func() {
+			for fileScanner.Scan() {
+				line := fileScanner.Text()
+				lines <- line
+			}
+			close(lines)
+		}()
 		if err != nil {
 			t.Logf(err.Error())
 		}
-		records := parser.Parse(string(content))
+		records := make(chan parser.Record)
+		go parser.Parse(lines, records)
 		raid_ := &parser.Raid{PlayersNumber: 1}
-		for _, record := range records {
+		for record := range records {
 			HandleRecord(raid_, record)
 		}
 		if raid_.Pulls[0].Target != pullTest.pull.Target {
@@ -51,6 +63,7 @@ func TestGetPull(t *testing.T) {
 		for actor, dmgDict := range raid_.Pulls[0].DamageDone {
 			for target, targetDmgDict := range dmgDict.TargetDamageDict {
 				for ability, abilityDict := range targetDmgDict.Ability {
+					t.Log(actor, target, ability)
 					amount := pullTest.pull.DamageDone[actor].TargetDamageDict[target].Ability[ability].Amount
 					if abilityDict.Amount != amount {
 						t.Logf("Invalid pull Amount: %d is not %d", abilityDict.Amount, amount)

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"flag"
 	"io"
-	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/JudgeGregg/gotor/globals"
 	"github.com/JudgeGregg/gotor/parser"
@@ -15,19 +17,69 @@ import (
 
 func main() {
 
-	argFile := os.Args[1]
-	_, filename := path.Split(argFile)
-	globals.RaidStartDate = raid.GetRaidStartDate(filename)
-	file, err := os.Open(argFile)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+	debug := flag.Bool("d", false, "debug")
+	argFile := flag.String("f", "", "file")
+	flag.Parse()
+	globals.Debug = *debug
+	if *argFile == "" {
+		argFile = &os.Args[1]
 	}
-	wInUTF8 := transform.NewReader(file, charmap.ISO8859_1.NewDecoder())
-	str, _ := io.ReadAll(wInUTF8)
-	records := parser.Parse(string(str))
+	_, filename := path.Split(*argFile)
+	globals.RaidStartDate = raid.GetRaidStartDate(filename)
+	lines := make(chan string)
+	records := make(chan parser.Record)
+	go tail(*argFile, lines)
+	go parser.Parse(lines, records)
 	raid_ := &parser.Raid{PlayersNumber: 1}
-	for _, record := range records {
+	for record := range records {
 		raid.HandleRecord(raid_, record)
+	}
+}
+
+func tail(filename string, lines chan string) {
+	f, err := os.Open(filename)
+	transformer := charmap.ISO8859_1.NewDecoder()
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	r := bufio.NewReader(f)
+	info, err := f.Stat()
+	if err != nil {
+		panic(err)
+	}
+	oldSize := info.Size()
+	for {
+		for line, prefix, err := r.ReadLine(); err != io.EOF; line, prefix, err = r.ReadLine() {
+			if prefix {
+				str, _, _ := transform.String(transformer, string(line))
+				lines <- str
+			} else {
+				str, _, _ := transform.String(transformer, string(line))
+				lines <- str
+			}
+		}
+		pos, err := f.Seek(0, io.SeekCurrent)
+		if err != nil {
+			panic(err)
+		}
+		for {
+			time.Sleep(time.Second)
+			newinfo, err := f.Stat()
+			if err != nil {
+				panic(err)
+			}
+			newSize := newinfo.Size()
+			if newSize != oldSize {
+				if newSize < oldSize {
+					f.Seek(0, 0)
+				} else {
+					f.Seek(pos, io.SeekStart)
+				}
+				r = bufio.NewReader(f)
+				oldSize = newSize
+				break
+			}
+		}
 	}
 }

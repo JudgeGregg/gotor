@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"bufio"
 	"strconv"
 	"strings"
 	"time"
@@ -9,20 +8,15 @@ import (
 	"github.com/JudgeGregg/gotor/globals"
 )
 
-func Parse(s string) []Record {
-	records := []Record{}
-	reader := strings.NewReader(s)
-	fileScanner := bufio.NewScanner(reader)
-	fileScanner.Split(bufio.ScanLines)
+func Parse(lines chan string, records chan Record) {
 	index := 0
-	for fileScanner.Scan() {
+	for line := range lines {
 		index++
-		line := fileScanner.Text()
 		record := getRecord(line)
 		record.LineNumber = index
-		records = append(records, record)
+		records <- record
 	}
-	return records
+	close(records)
 }
 
 func getRecord(line string) Record {

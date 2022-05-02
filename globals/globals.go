@@ -2,6 +2,8 @@ package globals
 
 import "time"
 
+var Debug = false
+
 const (
 	ENTERCOMBATID = "836045448945489"
 	EXITCOMBATID  = "836045448945490"
