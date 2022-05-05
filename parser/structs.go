@@ -17,14 +17,12 @@ type Actor struct {
 	Name string
 	NPC  bool
 	ID   string
-	UID  string
 }
 
 type Target struct {
 	Name string
 	NPC  bool
 	ID   string
-	UID  string
 }
 
 type Ability struct {
