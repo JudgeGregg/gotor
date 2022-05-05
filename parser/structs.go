@@ -44,7 +44,7 @@ type Effect struct {
 type Amount struct {
 	Altered      bool
 	Mitigated    bool
-	Mitigation   string
+	Mitigation   uint64
 	DamageType   string
 	DamageTypeID string
 	Absorbed     bool
@@ -54,12 +54,10 @@ type Amount struct {
 }
 
 type Raid struct {
-	Pulls              []Pull
-	InPull             bool
-	CurrentPull        *Pull
-	PlayersNumber      uint64
-	AlivePlayersNumber uint64
-	Difficulty         string
+	Pulls       []Pull
+	InPull      bool
+	CurrentPull *Pull
+	Difficulty  string
 }
 
 type Pull struct {
@@ -67,14 +65,14 @@ type Pull struct {
 	StopTime   time.Time
 	Target     string
 	DamageDone map[Actor]*DamageDict
-	HealDone   map[string]uint64
+	HealDone   map[Actor]*HealDict
 	ThreatDone map[string]uint64
 }
 
 type DamageDict struct {
 	ID               string
 	Name             string
-	TargetDamageDict map[string]*TargetDamageDict
+	TargetDamageDict map[Target]*TargetDamageDict
 }
 
 type TargetDamageDict struct {
@@ -83,13 +81,27 @@ type TargetDamageDict struct {
 	Ability map[string]*AbilityDict
 }
 
+type HealDict struct {
+	ID             string
+	Name           string
+	TargetHealDict map[Target]*TargetHealDict
+}
+
+type TargetHealDict struct {
+	ID      string
+	Name    string
+	Ability map[string]*AbilityDict
+}
+
 type AbilityDict struct {
-	ID            string
-	Name          string
-	Amount        uint64
-	Missed        uint64
-	Resisted      uint64
-	Immune        uint64
-	DodgedParried uint64
-	Shielded      uint64
+	ID           string
+	Name         string
+	Hits         uint64
+	Critical     uint64
+	Amount       uint64
+	Miss         uint64
+	Resist       uint64
+	Immune       uint64
+	DodgeOrParry uint64
+	Shield       uint64
 }
