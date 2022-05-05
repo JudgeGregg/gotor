@@ -111,3 +111,4 @@ var Targets = map[string]string{
 }
 
 var RaidStartDate = time.Time{}
+var MainPlayerName = ""

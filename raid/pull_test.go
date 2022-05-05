@@ -44,7 +44,7 @@ func TestGetPull(t *testing.T) {
 		}
 		records := make(chan parser.Record)
 		go parser.Parse(lines, records)
-		raid_ := &parser.Raid{PlayersNumber: 1}
+		raid_ := &parser.Raid{}
 		for record := range records {
 			HandleRecord(raid_, record)
 		}

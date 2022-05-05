@@ -20,7 +20,7 @@ func GetRaidStartDate(filename string) time.Time {
 }
 
 func HandleRecord(raid *parser.Raid, record parser.Record) {
-	if record.Effect.ActionID == globals.ENTERCOMBATID || record.Effect.ActionID == globals.EXITCOMBATID || record.Effect.EventID == globals.AREAENTEREDID || record.Effect.ActionID == globals.DEATHID || record.Effect.ActionID == globals.REVIVEID {
+	if record.Effect.ActionID == globals.ENTERCOMBATID || record.Effect.ActionID == globals.EXITCOMBATID || record.Effect.EventID == globals.AREAENTEREDID || record.Effect.ActionID == globals.DEATHID {
 		handleStartStop(raid, record)
 	} else if record.Effect.ActionID == globals.DAMAGEID {
 		handleDamage(raid, record)
@@ -156,10 +156,6 @@ func handleHeal(raid *parser.Raid, record parser.Record) {
 
 func handleStartStop(raid *parser.Raid, record parser.Record) {
 	if record.Effect.ActionID == globals.ENTERCOMBATID {
-		if raid.InPull {
-			//stop pull
-			return
-		}
 		//start pull
 		raid.CurrentPull = &parser.Pull{}
 		raid.CurrentPull.StartTime = record.DateTime
@@ -169,9 +165,8 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.DamageDone = damageDone
 		raid.CurrentPull.HealDone = healDone
 		raid.CurrentPull.ThreatDone = threatDone
-		raid.AlivePlayersNumber = raid.PlayersNumber
 		raid.InPull = true
-		log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
+		//log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
 	}
 	if record.Effect.ActionID == globals.EXITCOMBATID && raid.InPull {
 		//stop pull
@@ -179,42 +174,30 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StopTime = record.DateTime
 		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 		showDamage(raid.CurrentPull)
-		log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
+		//log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 	if record.Effect.EventID == globals.AREAENTEREDID {
 		switch record.Effect.SpecID {
 		case globals.FOURPLAYERVETERAN:
-			raid.PlayersNumber = 4
 			raid.Difficulty = globals.VETERAN
 		case globals.FOURPLAYERMASTER:
-			raid.PlayersNumber = 4
 			raid.Difficulty = globals.MASTER
 		case globals.EIGHTPLAYERSTORY:
-			raid.PlayersNumber = 8
 			raid.Difficulty = globals.STORY
 		case globals.EIGHTPLAYERVETERAN:
-			raid.PlayersNumber = 8
 			raid.Difficulty = globals.VETERAN
 		case globals.EIGHTPLAYERMASTER:
-			raid.PlayersNumber = 8
 			raid.Difficulty = globals.MASTER
 		}
 	}
-	if raid.InPull && record.Effect.ActionID == globals.DEATHID && !record.Target.NPC {
-		//log.Printf("%s DEAD at %s\n", record.Target.Name, record.DateTime)
-		raid.AlivePlayersNumber -= 1
-		if raid.AlivePlayersNumber == 0 {
-			//stop pull, WIPE
-			raid.InPull = false
-			raid.CurrentPull.StopTime = record.DateTime
-			raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
-			showDamage(raid.CurrentPull)
-			//log.Printf("%d Stopping fight WIPE %s", record.LineNumber, raid.CurrentPull.StopTime)
-		}
-	}
-	if raid.InPull && record.Effect.ActionID == globals.REVIVEID && !record.Target.NPC {
-		//log.Printf("%s REVIVED at %s\n", record.Target.Name, record.DateTime)
-		raid.AlivePlayersNumber += 1
+	if raid.InPull && record.Effect.ActionID == globals.DEATHID && record.Target.Name == globals.MainPlayerName {
+		//stop pull, dead
+		//log.Printf("%d %s DEAD at %s\n", record.LineNumber, record.Target.Name, record.DateTime)
+		raid.InPull = false
+		raid.CurrentPull.StopTime = record.DateTime
+		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
+		showDamage(raid.CurrentPull)
+		//log.Printf("%d Stopping fight DEAD %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 }
 

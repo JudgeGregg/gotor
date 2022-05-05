@@ -30,7 +30,7 @@ func main() {
 	records := make(chan parser.Record)
 	go tail(*argFile, lines)
 	go parser.Parse(lines, records)
-	raid_ := &parser.Raid{PlayersNumber: 1}
+	raid_ := &parser.Raid{}
 	for record := range records {
 		raid.HandleRecord(raid_, record)
 	}
@@ -49,6 +49,12 @@ func tail(filename string, lines chan string) {
 		panic(err)
 	}
 	oldSize := info.Size()
+	// Get main player name (stop pull if said player dies)
+	firstLine, _, _ := r.ReadLine()
+	str, _, _ := transform.String(transformer, string(firstLine))
+	firstRecord := parser.GetRecord(str)
+	globals.MainPlayerName = firstRecord.Actor.Name
+	//Start tailing
 	for {
 		for line, prefix, err := r.ReadLine(); err != io.EOF; line, prefix, err = r.ReadLine() {
 			if prefix {

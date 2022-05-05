@@ -19,6 +19,10 @@ func Parse(lines chan string, records chan Record) {
 	close(records)
 }
 
+func GetRecord(line string) Record {
+	return getRecord(line)
+}
+
 func getRecord(line string) Record {
 	//Do we have an amount and threat ?
 	var threat uint64

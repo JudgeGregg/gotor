@@ -54,12 +54,10 @@ type Amount struct {
 }
 
 type Raid struct {
-	Pulls              []Pull
-	InPull             bool
-	CurrentPull        *Pull
-	PlayersNumber      uint64
-	AlivePlayersNumber uint64
-	Difficulty         string
+	Pulls       []Pull
+	InPull      bool
+	CurrentPull *Pull
+	Difficulty  string
 }
 
 type Pull struct {
