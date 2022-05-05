@@ -42,6 +42,12 @@ var Targets = map[string]string{
 	"2760482855321600": "Jarg & Sorno",
 	"2760487150288896": "Jarg & Sorno",
 	"2624474125959168": "Bonethrasher",
+	//Asation Veteran
+	"3010424182145024": "The Writhing Horror",
+	"2994837745827840": "Operator IX",
+	"3013327580037120": "The Dread Guards",
+	"3013121421606912": "Kephess the Undying",
+	"3025220344479744": "The Terror from Beyond",
 	//Misc
 	"2857785339412480": "Operations Training Dummy",
 	//Athiss Veteran
