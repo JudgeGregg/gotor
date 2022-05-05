@@ -19,6 +19,7 @@ func main() {
 
 	debug := flag.Bool("d", false, "debug")
 	argFile := flag.String("f", "", "file")
+	mainPlayer := flag.String("p", "", "main player")
 	flag.Parse()
 	globals.Debug = *debug
 	if *argFile == "" {
@@ -26,6 +27,7 @@ func main() {
 	}
 	_, filename := path.Split(*argFile)
 	globals.RaidStartDate = raid.GetRaidStartDate(filename)
+	globals.MainPlayerName = *mainPlayer
 	lines := make(chan string)
 	records := make(chan parser.Record)
 	go tail(*argFile, lines)
@@ -49,12 +51,6 @@ func tail(filename string, lines chan string) {
 		panic(err)
 	}
 	oldSize := info.Size()
-	// Get main player name (stop pull if said player dies)
-	firstLine, _, _ := r.ReadLine()
-	str, _, _ := transform.String(transformer, string(firstLine))
-	firstRecord := parser.GetRecord(str)
-	globals.MainPlayerName = firstRecord.Actor.Name
-	//Start tailing
 	for {
 		for line, prefix, err := r.ReadLine(); err != io.EOF; line, prefix, err = r.ReadLine() {
 			if prefix {

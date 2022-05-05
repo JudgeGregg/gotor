@@ -94,6 +94,7 @@ type TargetHealDict struct {
 type AbilityDict struct {
 	ID           string
 	Name         string
+	DamageType   string
 	Hits         uint64
 	Critical     uint64
 	Amount       uint64

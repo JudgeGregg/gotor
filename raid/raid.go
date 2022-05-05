@@ -55,6 +55,9 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 			// Do we already know this ability ?
 			if ability, ok := targetDmgDict.Ability[abilityName]; ok {
 				ability.Amount += abilityAmount
+				if ability.DamageType == "" {
+					ability.DamageType = record.Amount.DamageType
+				}
 				ability.Hits += 1
 				if record.Amount.Mitigated {
 					switch record.Amount.Mitigation {
@@ -81,17 +84,17 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 					}
 				}
 			} else {
-				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
 				targetDmgDict.Ability[abilityName] = ability
 			}
 		} else {
-			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
 			targetDmgDict = &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 			targetDmgDict.Ability[abilityName] = ability
 			actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		}
 	} else {
-		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
 		targetDmgDict := &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 		actorDmgDict := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[parser.Target]*parser.TargetDamageDict)}
 		targetDmgDict.Ability[abilityName] = ability
@@ -174,6 +177,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StopTime = record.DateTime
 		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 		showDamage(raid.CurrentPull)
+		showDetails(raid.CurrentPull)
 		//log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 	if record.Effect.EventID == globals.AREAENTEREDID {
@@ -197,6 +201,7 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StopTime = record.DateTime
 		raid.Pulls = append(raid.Pulls, *raid.CurrentPull)
 		showDamage(raid.CurrentPull)
+		showDetails(raid.CurrentPull)
 		//log.Printf("%d Stopping fight DEAD %s", record.LineNumber, raid.CurrentPull.StopTime)
 	}
 }
@@ -260,5 +265,23 @@ func showDamage(pull *parser.Pull) {
 func checkPullTarget(raid *parser.Raid, record parser.Record) {
 	if name, ok := globals.Targets[record.Target.ID]; ok {
 		raid.CurrentPull.Target = name
+	}
+}
+
+func showDetails(pull *parser.Pull) {
+	if pull.Target == "" && !globals.Debug {
+		return
+	}
+	mainPlayerName := globals.MainPlayerName
+	log.Printf("Damage taken details for %s:", mainPlayerName)
+	for player, dmgDict := range pull.DamageDone {
+		for target, targetDmgDict := range dmgDict.TargetDamageDict {
+			if target.Name == mainPlayerName {
+				for _, abilityDmgDict := range targetDmgDict.Ability {
+					log.Printf("%s %s %s %s %s %d %d Dodge: %d Shield: %d\n", player.Name, player.ID, abilityDmgDict.ID, abilityDmgDict.Name, abilityDmgDict.DamageType, abilityDmgDict.Hits, abilityDmgDict.Amount, abilityDmgDict.DodgeOrParry, abilityDmgDict.Shield)
+				}
+			}
+
+		}
 	}
 }
