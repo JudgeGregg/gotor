@@ -206,7 +206,7 @@ func getAmount(amountField string) Amount {
 	if amountField == "" {
 		return amount
 	}
-	if strings.Contains(amountField, "{836045448953664}") {
+	if strings.Contains(amountField, globals.AREAENTEREDID) {
 		// AreaChanged, ignore amount
 		return amount
 	}
@@ -237,7 +237,7 @@ func getAmount(amountField string) Amount {
 		return amount
 	}
 	//Reflected Damage
-	if strings.Contains(amountField, "{836045448953649}") {
+	if strings.Contains(amountField, globals.REFLECTEDID) {
 		if len(split) == 4 {
 			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 			amount.Amount = quantityInt
@@ -265,32 +265,22 @@ func getAmount(amountField string) Amount {
 	}
 	//Damage
 	if len(split) == 3 {
-		if strings.Contains(amountField, "{836045448945505}") {
+		if strings.Contains(amountField, globals.PARRYID) || strings.Contains(amountField, globals.DEFLECTID) || strings.Contains(amountField, globals.DODGEID) {
 			amount.Mitigated = true
 			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
 			amount.Amount = 0
 			amount.Effective = 0
-		} else if strings.Contains(amountField, "{836045448945503}") {
-			amount.Mitigated = true
-			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
-			amount.Amount = 0
-			amount.Effective = 0
-		} else if strings.Contains(amountField, "{836045448945508}") {
-			amount.Mitigated = true
-			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
-			amount.Amount = 0
-			amount.Effective = 0
-		} else if strings.Contains(amountField, "{836045448945502}") {
+		} else if strings.Contains(amountField, globals.MISSID) {
 			amount.Mitigated = true
 			amount.Mitigation = globals.MISS
 			amount.Amount = 0
 			amount.Effective = 0
-		} else if strings.Contains(amountField, "{836045448945507}") {
+		} else if strings.Contains(amountField, globals.RESISTID) {
 			amount.Mitigated = true
 			amount.Mitigation = globals.RESIST
 			amount.Amount = 0
 			amount.Effective = 0
-		} else if strings.Contains(amountField, "{836045448945506}") {
+		} else if strings.Contains(amountField, globals.IMMUNEID) {
 			amount.Mitigated = true
 			amount.Mitigation = globals.IMMUNE
 			amount.Amount = 0
@@ -323,8 +313,8 @@ func getAmount(amountField string) Amount {
 	}
 	//Bubbled Damage
 	//{836045448945511} == absorbed
-	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, "{836045448945511}") {
-		if strings.Contains(amountField, "{836045448945509}") {
+	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, globals.ABSORBID) {
+		if strings.Contains(amountField, globals.SHIELDID) {
 			//Shield
 			amount.Altered = true
 			amount.Mitigated = true
@@ -355,7 +345,7 @@ func getAmount(amountField string) Amount {
 		}
 	}
 	//Shield but no bubble
-	if strings.Contains(amountField, "{836045448945511}") {
+	if strings.Contains(amountField, globals.ABSORBID) {
 		amount.Mitigated = true
 		amount.Mitigation = globals.SHIELD
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
@@ -368,7 +358,7 @@ func getAmount(amountField string) Amount {
 		return amount
 	}
 	//Shield but no absorb, bug ?
-	if strings.Contains(amountField, "{836045448945509}") {
+	if strings.Contains(amountField, globals.SHIELDID) {
 		amount.Mitigated = true
 		amount.Mitigation = globals.SHIELD
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)

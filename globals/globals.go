@@ -19,6 +19,8 @@ const (
 	EIGHTPLAYERVETERAN = "836045448953652"
 	EIGHTPLAYERMASTER  = "836045448953654" //FIXME
 
+	REFLECTEDID = "836045448953649"
+
 	STORY   = "Story"
 	VETERAN = "Veteran"
 	MASTER  = "Master"
@@ -26,30 +28,38 @@ const (
 	DEATHID  = "836045448945493"
 	REVIVEID = "836045448945494"
 
+	PARRYID   = "836045448945503"
+	DODGEID   = "836045448945505"
+	DEFLECTID = "836045448945508"
+	MISSID    = "836045448945502"
+	RESISTID  = "836045448945507"
+	IMMUNEID  = "836045448945506"
+
+	ABSORBID = "836045448945511"
+	SHIELDID = "836045448945509"
+
 	//Mitigations
+
 	DODGE_PARRY_DEFLECT uint64 = iota
 	MISS
 	RESIST
 	IMMUNE
 	SHIELD
+
+	//Damage Types
+	KINETICID   = "836045448940873"
+	ENERGYID    = "836045448940874"
+	ELEMENTALID = "836045448940875"
+	INTERNALID  = "836045448940876"
 )
 
 var Targets = map[string]string{
-	//Karagga Veteran
-	"2761191524925440": "Karagga the Unyielding",
-	"2760637474144256": "Foreman Crusher",
-	"2748401112317952": "G4-B3 Heavy Fabricator",
-	"2760482855321600": "Jarg & Sorno",
-	"2760487150288896": "Jarg & Sorno",
-	"2624474125959168": "Bonethrasher",
-	//Asation Veteran
-	"3010424182145024": "The Writhing Horror",
-	"2994837745827840": "Operator IX",
-	"3013327580037120": "The Dread Guards",
-	"3013121421606912": "Kephess the Undying",
-	"3025220344479744": "The Terror from Beyond",
-	//Misc
+
+	/// Misc
 	"2857785339412480": "Operations Training Dummy",
+
+	/// Flashpoints
+
 	//Athiss Veteran
 	"172496007036928":  "Professor Ley'arsha",
 	"2263129937412096": "The Beast of Vodall Kressh",
@@ -108,12 +118,28 @@ var Targets = map[string]string{
 	//Nathema Conspiracy Master
 	//Ruins of Nul Master
 	//Spirit of Vengeance Master
-	//Dread Fortress Master
-	"3303031714086912": "Nefra, Who Bars the Way",
+
+	/// Operations
+
 	//Eternity Vault Veteran
 	"2289823159156736": "Soa",
 	"2034526008115200": "Gharj",
 	"2034573252755456": "Annihilation Droid XRR-3",
+	//Karagga Veteran
+	"2761191524925440": "Karagga the Unyielding",
+	"2760637474144256": "Foreman Crusher",
+	"2748401112317952": "G4-B3 Heavy Fabricator",
+	"2760482855321600": "Jarg & Sorno",
+	"2760487150288896": "Jarg & Sorno",
+	"2624474125959168": "Bonethrasher",
+	//Asation Veteran
+	"3010424182145024": "The Writhing Horror",
+	"2994837745827840": "Operator IX",
+	"3013327580037120": "The Dread Guards",
+	"3013121421606912": "Kephess the Undying",
+	"3025220344479744": "The Terror from Beyond",
+	//Dread Fortress Master
+	"3303031714086912": "Nefra, Who Bars the Way",
 }
 
 var RaidStartDate = time.Time{}
