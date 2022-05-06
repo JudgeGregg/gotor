@@ -243,7 +243,8 @@ func getAmount(amountField string) Amount {
 			amount.Amount = quantityInt
 			amount.Effective = quantityInt
 			amount.DamageType = split[1]
-			damageTypeID := strings.ReplaceAll(split[2], "{", "")
+			damageTypeID := strings.Split(split[2], "(")[0]
+			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
 			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
 			amount.DamageTypeID = damageTypeID
 			return amount
@@ -255,7 +256,8 @@ func getAmount(amountField string) Amount {
 			amount.Amount = quantityInt
 			amount.Effective = effectiveInt
 			amount.DamageType = split[2]
-			damageTypeID := strings.ReplaceAll(split[3], "{", "")
+			damageTypeID := strings.Split(split[3], "(")[0]
+			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
 			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
 			amount.DamageTypeID = damageTypeID
 			return amount
@@ -265,12 +267,17 @@ func getAmount(amountField string) Amount {
 	if len(split) == 3 {
 		if strings.Contains(amountField, "{836045448945505}") {
 			amount.Mitigated = true
-			amount.Mitigation = globals.DODGE_OR_PARRY
+			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
 			amount.Amount = 0
 			amount.Effective = 0
 		} else if strings.Contains(amountField, "{836045448945503}") {
 			amount.Mitigated = true
-			amount.Mitigation = globals.DODGE_OR_PARRY
+			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
+			amount.Amount = 0
+			amount.Effective = 0
+		} else if strings.Contains(amountField, "{836045448945508}") {
+			amount.Mitigated = true
+			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
 			amount.Amount = 0
 			amount.Effective = 0
 		} else if strings.Contains(amountField, "{836045448945502}") {

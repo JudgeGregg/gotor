@@ -92,15 +92,15 @@ type TargetHealDict struct {
 }
 
 type AbilityDict struct {
-	ID           string
-	Name         string
-	DamageType   string
-	Hits         uint64
-	Critical     uint64
-	Amount       uint64
-	Miss         uint64
-	Resist       uint64
-	Immune       uint64
-	DodgeOrParry uint64
-	Shield       uint64
+	ID                string
+	Name              string
+	DamageType        string
+	Hits              uint64
+	Critical          uint64
+	Amount            uint64
+	Miss              uint64
+	Resist            uint64
+	Immune            uint64
+	DodgeParryDeflect uint64
+	Shield            uint64
 }

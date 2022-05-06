@@ -27,7 +27,7 @@ const (
 	REVIVEID = "836045448945494"
 
 	//Mitigations
-	DODGE_OR_PARRY uint64 = iota
+	DODGE_PARRY_DEFLECT uint64 = iota
 	MISS
 	RESIST
 	IMMUNE
@@ -108,6 +108,12 @@ var Targets = map[string]string{
 	//Nathema Conspiracy Master
 	//Ruins of Nul Master
 	//Spirit of Vengeance Master
+	//Dread Fortress Master
+	"3303031714086912": "Nefra, Who Bars the Way",
+	//Eternity Vault Veteran
+	"2289823159156736": "Soa",
+	"2034526008115200": "Gharj",
+	"2034573252755456": "Annihilation Droid XRR-3",
 }
 
 var RaidStartDate = time.Time{}

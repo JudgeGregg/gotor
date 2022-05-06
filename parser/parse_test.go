@@ -18,10 +18,12 @@ var recordTestMap = map[string]Record{
 var amountTestMap = map[string]Amount{
 	`5612 ~0 kinetic {836045448940873} -shield {836045448945509} (5612 absorbed {836045448945511})`: {Altered: true, Mitigated: true, Mitigation: globals.SHIELD, DamageType: "kinetic", DamageTypeID: "836045448940873", Amount: 5612, Effective: 0},
 	`247 energy {836045448940874} -shield {836045448945509} (3450 absorbed {836045448945511})`:      {Mitigated: true, Mitigation: globals.SHIELD, DamageType: "energy", DamageTypeID: "836045448940874", Amount: 247, Effective: 247},
-	`0 -dodge {836045448945505}`: {Mitigated: true, Mitigation: globals.DODGE_OR_PARRY, Amount: 0, Effective: 0},
+	`0 -dodge {836045448945505}`:   {Mitigated: true, Mitigation: globals.DODGE_PARRY_DEFLECT, Amount: 0, Effective: 0},
+	`0 -deflect {836045448945508}`: {Mitigated: true, Mitigation: globals.DODGE_PARRY_DEFLECT, Amount: 0, Effective: 0},
 	`525 ~0 energy {836045448940874} -shield {836045448945509} (525 absorbed {836045448945511})`: {Altered: true, Mitigated: true, Mitigation: globals.SHIELD, DamageType: "energy", DamageTypeID: "836045448940874", Amount: 525, Effective: 0},
-	`0 -immune {836045448945506}`:     {Mitigated: true, Mitigation: globals.IMMUNE, Amount: 0, Effective: 0},
-	`11053 kinetic {836045448940873}`: {Amount: 11053, Effective: 11053, DamageType: "kinetic", DamageTypeID: "836045448940873"},
+	`0 -immune {836045448945506}`:                                  {Mitigated: true, Mitigation: globals.IMMUNE, Amount: 0, Effective: 0},
+	`11053 kinetic {836045448940873}`:                              {Amount: 11053, Effective: 11053, DamageType: "kinetic", DamageTypeID: "836045448940873"},
+	`24906 kinetic {836045448940873}(reflected {836045448953649})`: {Amount: 24906, Effective: 24906, DamageType: "kinetic", DamageTypeID: "836045448940873"},
 }
 
 var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(1, 1, 1, 21, 39, 27, 720000000, time.UTC)}
