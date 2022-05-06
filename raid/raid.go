@@ -20,14 +20,32 @@ func GetRaidStartDate(filename string) time.Time {
 }
 
 func HandleRecord(raid *parser.Raid, record parser.Record) {
-	if record.Effect.ActionID == globals.ENTERCOMBATID || record.Effect.ActionID == globals.EXITCOMBATID || record.Effect.EventID == globals.AREAENTEREDID || record.Effect.ActionID == globals.DEATHID {
+	switch record.Effect.ActionID {
+	case globals.AREAENTEREDID:
+		handleAreaEntered(raid, record)
+	case globals.ENTERCOMBATID, globals.EXITCOMBATID, globals.DEATHID:
 		handleStartStop(raid, record)
-	} else if record.Effect.ActionID == globals.DAMAGEID {
+	case globals.DAMAGEID:
 		handleDamage(raid, record)
-	} else if record.Effect.ActionID == globals.HEALID {
+	case globals.HEALID:
 		handleHeal(raid, record)
 	}
 	handleThreat(raid, record)
+}
+
+func handleAreaEntered(raid *parser.Raid, record parser.Record) {
+	switch record.Effect.SpecID {
+	case globals.FOURPLAYERVETERAN:
+		raid.Difficulty = globals.VETERAN
+	case globals.FOURPLAYERMASTER:
+		raid.Difficulty = globals.MASTER
+	case globals.EIGHTPLAYERSTORY:
+		raid.Difficulty = globals.STORY
+	case globals.EIGHTPLAYERVETERAN:
+		raid.Difficulty = globals.VETERAN
+	case globals.EIGHTPLAYERMASTER:
+		raid.Difficulty = globals.MASTER
+	}
 }
 
 func handleDamage(raid *parser.Raid, record parser.Record) {
@@ -186,20 +204,6 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		showDamage(raid.CurrentPull)
 		showDetails(raid.CurrentPull)
 		//log.Printf("%d Stopping fight exited %s", record.LineNumber, raid.CurrentPull.StopTime)
-	}
-	if record.Effect.EventID == globals.AREAENTEREDID {
-		switch record.Effect.SpecID {
-		case globals.FOURPLAYERVETERAN:
-			raid.Difficulty = globals.VETERAN
-		case globals.FOURPLAYERMASTER:
-			raid.Difficulty = globals.MASTER
-		case globals.EIGHTPLAYERSTORY:
-			raid.Difficulty = globals.STORY
-		case globals.EIGHTPLAYERVETERAN:
-			raid.Difficulty = globals.VETERAN
-		case globals.EIGHTPLAYERMASTER:
-			raid.Difficulty = globals.MASTER
-		}
 	}
 	if raid.InPull && record.Effect.ActionID == globals.DEATHID && record.Target.Name == globals.MainPlayerName {
 		//stop pull, dead
