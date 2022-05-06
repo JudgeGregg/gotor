@@ -59,47 +59,54 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 					ability.DamageType = record.Amount.DamageType
 				}
 				ability.Hits += 1
-				if record.Amount.Mitigated {
-					switch record.Amount.Mitigation {
-					case globals.IMMUNE:
-						{
-							ability.Immune += 1
-						}
-					case globals.RESIST:
-						{
-							ability.Resist += 1
-						}
-					case globals.MISS:
-						{
-							ability.Miss += 1
-						}
-					case globals.DODGE_OR_PARRY:
-						{
-							ability.DodgeOrParry += 1
-						}
-					case globals.SHIELD:
-						{
-							ability.Shield += 1
-						}
-					}
-				}
+				handleMitigation(ability, record)
 			} else {
 				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
+				handleMitigation(ability, record)
 				targetDmgDict.Ability[abilityName] = ability
 			}
 		} else {
 			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
+			handleMitigation(ability, record)
 			targetDmgDict = &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 			targetDmgDict.Ability[abilityName] = ability
 			actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		}
 	} else {
 		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
+		handleMitigation(ability, record)
 		targetDmgDict := &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 		actorDmgDict := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[parser.Target]*parser.TargetDamageDict)}
 		targetDmgDict.Ability[abilityName] = ability
 		actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		raid.CurrentPull.DamageDone[actor] = actorDmgDict
+	}
+}
+
+func handleMitigation(ability *parser.AbilityDict, record parser.Record) {
+	if record.Amount.Mitigated {
+		switch record.Amount.Mitigation {
+		case globals.IMMUNE:
+			{
+				ability.Immune += 1
+			}
+		case globals.RESIST:
+			{
+				ability.Resist += 1
+			}
+		case globals.MISS:
+			{
+				ability.Miss += 1
+			}
+		case globals.DODGE_PARRY_DEFLECT:
+			{
+				ability.DodgeParryDeflect += 1
+			}
+		case globals.SHIELD:
+			{
+				ability.Shield += 1
+			}
+		}
 	}
 }
 
@@ -138,17 +145,17 @@ func handleHeal(raid *parser.Raid, record parser.Record) {
 				ability.Amount += abilityAmount
 				ability.Hits += 1
 			} else {
-				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+				ability = &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: abilityAmount}
 				targetHeaDict.Ability[abilityName] = ability
 			}
 		} else {
-			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+			ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: abilityAmount}
 			targetHeaDict = &parser.TargetHealDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 			targetHeaDict.Ability[abilityName] = ability
 			healDict.TargetHealDict[target] = targetHeaDict
 		}
 	} else {
-		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective}
+		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: abilityAmount}
 		targetHeaDict := &parser.TargetHealDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
 		heaDict := &parser.HealDict{Name: actorName, ID: actorID, TargetHealDict: make(map[parser.Target]*parser.TargetHealDict)}
 		targetHeaDict.Ability[abilityName] = ability
@@ -278,7 +285,7 @@ func showDetails(pull *parser.Pull) {
 		for target, targetDmgDict := range dmgDict.TargetDamageDict {
 			if target.Name == mainPlayerName {
 				for _, abilityDmgDict := range targetDmgDict.Ability {
-					log.Printf("%s %s %s %s %s %d %d Dodge: %d Shield: %d\n", player.Name, player.ID, abilityDmgDict.ID, abilityDmgDict.Name, abilityDmgDict.DamageType, abilityDmgDict.Hits, abilityDmgDict.Amount, abilityDmgDict.DodgeOrParry, abilityDmgDict.Shield)
+					log.Printf("%s %s %s %s %s Hits: %d, Amounts: %d Miss: %d, Dodge/Parry/Deflect: %d Shield: %d Resist: %d, Immune: %d\n", player.Name, player.ID, abilityDmgDict.ID, abilityDmgDict.Name, abilityDmgDict.DamageType, abilityDmgDict.Hits, abilityDmgDict.Amount, abilityDmgDict.Miss, abilityDmgDict.DodgeParryDeflect, abilityDmgDict.Shield, abilityDmgDict.Resist, abilityDmgDict.Immune)
 				}
 			}
 
