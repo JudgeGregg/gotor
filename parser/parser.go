@@ -312,7 +312,6 @@ func getAmount(amountField string) Amount {
 		return amount
 	}
 	//Bubbled Damage
-	//{836045448945511} == absorbed
 	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, globals.ABSORBID) {
 		if strings.Contains(amountField, globals.SHIELDID) {
 			//Shield

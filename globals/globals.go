@@ -118,6 +118,11 @@ var Targets = map[string]string{
 	//Nathema Conspiracy Master
 	//Ruins of Nul Master
 	//Spirit of Vengeance Master
+	//False Emperor Master
+	"2511688284766208": "Darth Malgus",
+	"2511701169668096": "HK-47",
+	"2511709759602688": "Jindo Krey",
+	"2511761299210240": "Tregg the Destroyer",
 
 	/// Operations
 
