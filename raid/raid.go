@@ -20,9 +20,10 @@ func GetRaidStartDate(filename string) time.Time {
 }
 
 func HandleRecord(raid *parser.Raid, record parser.Record) {
-	switch record.Effect.ActionID {
-	case globals.AREAENTEREDID:
+	if record.Effect.EventID == globals.AREAENTEREDID {
 		handleAreaEntered(raid, record)
+	}
+	switch record.Effect.ActionID {
 	case globals.ENTERCOMBATID, globals.EXITCOMBATID, globals.DEATHID:
 		handleStartStop(raid, record)
 	case globals.DAMAGEID:
