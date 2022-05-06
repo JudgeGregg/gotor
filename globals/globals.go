@@ -116,6 +116,11 @@ var Targets = map[string]string{
 	"3505260249219072": "Ortuno",
 	"3505268839153664": "Stivastin",
 	"3506922401562624": "M2-AUX Foreman",
+	//Mandalorian Raiders Master
+	"3158428755165184": "Braxx the Bloodhound",
+	"3172567787503616": "Mavrix Varad",
+	"3250538623795200": "Gil",
+	"3158402985361408": "Ezeraline",
 	//Nathema Conspiracy Master
 	//Ruins of Nul Master
 	//Spirit of Vengeance Master
@@ -127,24 +132,24 @@ var Targets = map[string]string{
 
 	/// Operations
 
-	//Eternity Vault Veteran
+	//Eternity Vault 8 Veteran
 	"2289823159156736": "Soa",
 	"2034526008115200": "Gharj",
 	"2034573252755456": "Annihilation Droid XRR-3",
-	//Karagga Veteran
+	//Karagga 8 Veteran
 	"2761191524925440": "Karagga the Unyielding",
 	"2760637474144256": "Foreman Crusher",
 	"2748401112317952": "G4-B3 Heavy Fabricator",
 	"2760482855321600": "Jarg & Sorno",
 	"2760487150288896": "Jarg & Sorno",
 	"2624474125959168": "Bonethrasher",
-	//Asation Veteran
+	//Asation 8 Veteran
 	"3010424182145024": "The Writhing Horror",
 	"2994837745827840": "Operator IX",
 	"3013327580037120": "The Dread Guards",
 	"3013121421606912": "Kephess the Undying",
 	"3025220344479744": "The Terror from Beyond",
-	//The Dread Fortress Master
+	//The Dread Fortress 8 Master
 	"3303031714086912": "Nefra, Who Bars the Way",
 }
 
