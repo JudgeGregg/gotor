@@ -22,8 +22,9 @@ func main() {
 	mainPlayer := flag.String("p", "", "main player")
 	flag.Parse()
 	globals.Debug = *debug
-	if *argFile == "" {
-		argFile = &os.Args[1]
+	if *argFile == "" || *mainPlayer == "" {
+		flag.Usage()
+		os.Exit(0)
 	}
 	_, filename := path.Split(*argFile)
 	globals.RaidStartDate = raid.GetRaidStartDate(filename)
