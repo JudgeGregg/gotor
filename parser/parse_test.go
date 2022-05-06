@@ -20,10 +20,18 @@ var amountTestMap = map[string]Amount{
 	`247 energy {836045448940874} -shield {836045448945509} (3450 absorbed {836045448945511})`:      {Mitigated: true, Mitigation: globals.SHIELD, DamageType: "energy", DamageTypeID: globals.ENERGYID, Amount: 247, Effective: 247},
 	`0 -dodge {836045448945505}`:   {Mitigated: true, Mitigation: globals.DODGE_PARRY_DEFLECT, Amount: 0, Effective: 0},
 	`0 -deflect {836045448945508}`: {Mitigated: true, Mitigation: globals.DODGE_PARRY_DEFLECT, Amount: 0, Effective: 0},
+	`0 -resist {836045448945507}`:  {Mitigated: true, Mitigation: globals.RESIST, Amount: 0, Effective: 0},
+	`0 -immune {836045448945506}`:  {Mitigated: true, Mitigation: globals.IMMUNE, Amount: 0, Effective: 0},
+	`0 -miss {836045448945502}`:    {Mitigated: true, Mitigation: globals.MISS, Amount: 0, Effective: 0},
 	`525 ~0 energy {836045448940874} -shield {836045448945509} (525 absorbed {836045448945511})`: {Altered: true, Mitigated: true, Mitigation: globals.SHIELD, DamageType: "energy", DamageTypeID: "836045448940874", Amount: 525, Effective: 0},
-	`0 -immune {836045448945506}`:                                  {Mitigated: true, Mitigation: globals.IMMUNE, Amount: 0, Effective: 0},
-	`11053 kinetic {836045448940873}`:                              {Amount: 11053, Effective: 11053, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
-	`24906 kinetic {836045448940873}(reflected {836045448953649})`: {Amount: 24906, Effective: 24906, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
+	`11053 kinetic {836045448940873}`:                                  {Amount: 11053, Effective: 11053, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
+	`11053 ~11055 kinetic {836045448940873}`:                           {Altered: true, Amount: 11053, Effective: 11055, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
+	`24906 kinetic {836045448940873}(reflected {836045448953649})`:     {Amount: 24906, Effective: 24906, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
+	`247 ~0 energy {836045448940874} (247 absorbed {836045448945511})`: {Altered: true, DamageType: "energy", DamageTypeID: globals.ENERGYID, Amount: 247, Effective: 0},
+	`11053* kinetic {836045448940873}`:                                 {Amount: 11053, Critical: true, Effective: 11053, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
+	// Critical Overheal
+	`8649* ~0`: {Amount: 8649, Altered: true, Critical: true, Effective: 0},
+	`76845 ~76846 kinetic {836045448940873}(reflected {836045448953649})`: {Altered: true, Amount: 76845, Effective: 76846, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
 }
 
 var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(1, 1, 1, 21, 39, 27, 720000000, time.UTC)}

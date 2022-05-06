@@ -19,7 +19,7 @@ func TestGetPull(t *testing.T) {
 		StopTime:  time.Date(1, 1, 1, 21, 31, 37, 979000000, time.UTC),
 		DamageDone: map[parser.Actor]*parser.DamageDict{
 			{Name: "Gamorrean Palace Guard", ID: "2470959109898240", NPC: true}: {TargetDamageDict: map[parser.Target]*parser.TargetDamageDict{
-				{Name: "Zangyef", ID: "686674938948221"}:     {Ability: map[string]*parser.AbilityDict{"Ranged Attack": {Amount: 6391}}},
+				{Name: "Zangyef", ID: "686674938948221"}:     {Ability: map[string]*parser.AbilityDict{"Ranged Attack": {Amount: 6391}, "Close Attack": {Amount: 4000}}},
 				{Name: "Tenna Aiken", ID: "689371682814222"}: {Ability: map[string]*parser.AbilityDict{"Ranged Attack": {Amount: 4000}}},
 			}},
 			{Name: "Zangyef", ID: "686674938948221"}: {TargetDamageDict: map[parser.Target]*parser.TargetDamageDict{

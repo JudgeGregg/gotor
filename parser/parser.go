@@ -255,6 +255,7 @@ func getAmount(amountField string) Amount {
 			effectiveInt, _ := strconv.ParseUint(effective, 10, 64)
 			amount.Amount = quantityInt
 			amount.Effective = effectiveInt
+			amount.Altered = true
 			amount.DamageType = split[2]
 			damageTypeID := strings.Split(split[3], "(")[0]
 			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
