@@ -35,6 +35,8 @@ func HandleRecord(raid *parser.Raid, record parser.Record) {
 
 func handleAreaEntered(raid *parser.Raid, record parser.Record) {
 	switch record.Effect.SpecID {
+	case globals.FOURPLAYERSTORY:
+		raid.Difficulty = globals.STORY
 	case globals.FOURPLAYERVETERAN:
 		raid.Difficulty = globals.VETERAN
 	case globals.FOURPLAYERMASTER:
