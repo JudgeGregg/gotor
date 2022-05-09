@@ -7,6 +7,9 @@ import (
 	"github.com/JudgeGregg/gotor/globals"
 )
 
+var line1 = `[21:23:39.060] [@Zangyef#686674938948221|(4613.04,4821.58,698.01,168.25)|(326800/337833)] [=] [Hunter's Boon {4503178720575488}] [ApplyEffect {836045448945477}: Hunter's Boon {4503178720575765}]`
+var line2 = `[21:23:39.063] [::PEWPEWGSF::|(4613.04,4821.58,698.01,168.25)|(326800/337833)] [=] [Sprint {810670782152704}] [ApplyEffect {836045448945477}: Sprint {810670782152704}]`
+
 var recordTestMap = map[string]Record{
 	"[21:39:27.720] [@Kiss Assoka#689409546916090|(-148.01,-3.75,-23.43,166.41)|(319754/376614)] [=] [Ball Lightning {3408941312638976}] [Event {836045448945472}: AbilityActivate {836045448945479}]":                                                                                                                                      {Ability: Ability{Name: "Ball Lightning", ID: "3408941312638976"}, Actor: Actor{Name: "Kiss Assoka", ID: "689409546916090"}, Target: Target{Name: "Kiss Assoka", ID: "689409546916090"}, Effect: Effect{Event: "Event", EventID: "836045448945472", Action: "AbilityActivate", ActionID: "836045448945479"}},
 	"[21:39:27.842] [@Yyuukkii#689994892081602|(-154.48,-15.22,-23.43,-151.35)|(303424/363102)] [Vicious Manka Cat {2624461241057280}:38983000128695|(-149.66,-7.14,-23.43,-140.64)|(360016/1113496)] [Battering Assault {807720139620352}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (343 energy {836045448940874}) <343>": {Ability: Ability{Name: "Battering Assault", ID: "807720139620352"}, Actor: Actor{Name: "Yyuukkii", ID: "689994892081602"}, Target: Target{Name: "Vicious Manka Cat", ID: "2624461241057280", NPC: true}, Effect: Effect{Event: "ApplyEffect", EventID: "836045448945477", Action: "Damage", ActionID: "836045448945501"}, Threat: 343},
@@ -36,8 +39,12 @@ var amountTestMap = map[string]Amount{
 
 var timeTestMap = map[string]time.Time{"[21:39:27.720": time.Date(1, 1, 1, 21, 39, 27, 720000000, time.UTC)}
 
+var threatTestMap = map[string]uint64{"<25>": 25, "<aa>": 0}
+
 var areaEnteredTestMap = map[string]Record{
 	`[23:25:48.788] [@Zangyef#686674938948221|(125.67,35.44,5.02,55.10)|(338278/338278)] [] [] [AreaEntered {836045448953664}: Karagga's Palace {833571547775669} 8 Player Veteran {836045448953652}] (he4002) <v7.0.0b>`: {Actor: Actor{Name: "Zangyef", ID: "686674938948221"}, Effect: Effect{Event: "AreaEntered", EventID: "836045448953664", Action: "Karagga's Palace", ActionID: "833571547775669", Spec: "8 Player Veteran", SpecID: "836045448953652"}}}
+
+var actorTestMap = map[string]Actor{"[Gamorrean Palace Guard {2470959109898240}:38983000004090|(-13.81,7.33,0.24,20.99)|(56242/964970)]": Actor{Name: "Gamorrean Palace Guard", ID: "2470959109898240"}}
 
 func TestGetRecord(t *testing.T) {
 	for line, result := range recordTestMap {
@@ -85,6 +92,16 @@ func TestGetTime(t *testing.T) {
 	}
 }
 
+func TestParse(t *testing.T) {
+	records := make(chan Record)
+	lines := make(chan string)
+	go func() { lines <- line1; lines <- line2; close(lines) }()
+	go Parse(lines, records)
+	for _ = range records {
+		//Consume records
+	}
+}
+
 func TestGetAreaEntered(t *testing.T) {
 	for line, result := range areaEnteredTestMap {
 		record := getRecord(line)
@@ -107,6 +124,24 @@ func TestGetAreaEntered(t *testing.T) {
 		if record.Threat != result.Threat {
 			t.Logf("Invalid record threat: %v is not %v", record.Threat, result.Threat)
 			t.Fail()
+		}
+	}
+}
+
+func TestGetThreat(t *testing.T) {
+	for line, result := range threatTestMap {
+		threat := getThreat(line)
+		if threat != result {
+			t.Logf("Invalid threat: %v is not %v", threat, result)
+		}
+	}
+}
+
+func TestGetActor(t *testing.T) {
+	for line, result := range actorTestMap {
+		actor := getActor(line)
+		if actor != result {
+			t.Logf("Invalid actor: %v is not %v", actor, result)
 		}
 	}
 }

@@ -12,6 +12,9 @@ func Parse(lines chan string, records chan Record) {
 	index := 0
 	for line := range lines {
 		index++
+		if ignoreLine(line) {
+			continue
+		}
 		record := getRecord(line)
 		record.LineNumber = index
 		records <- record
@@ -21,6 +24,11 @@ func Parse(lines chan string, records chan Record) {
 
 func GetRecord(line string) Record {
 	return getRecord(line)
+}
+
+func ignoreLine(line string) bool {
+	//Ignore GSF
+	return strings.Contains(line, "::")
 }
 
 func getRecord(line string) Record {
@@ -66,10 +74,7 @@ func getThreat(threat string) uint64 {
 	var threatInt uint64
 	isNotDigit := func(c rune) bool { return c < '0' || c > '9' }
 	if (strings.IndexFunc(threat, isNotDigit)) == -1 {
-		threatInt, err := strconv.ParseUint(threat, 10, 64)
-		if err != nil {
-			threatInt = 0
-		}
+		threatInt, _ := strconv.ParseUint(threat, 10, 64)
 		return threatInt
 	} else {
 		threatInt = 0
@@ -204,10 +209,6 @@ func getEffect(effectField string) Effect {
 func getAmount(amountField string) Amount {
 	amount := Amount{}
 	if amountField == "" {
-		return amount
-	}
-	if strings.Contains(amountField, globals.AREAENTEREDID) {
-		// AreaChanged, ignore amount
 		return amount
 	}
 	if strings.HasSuffix(amountField, "-") {
