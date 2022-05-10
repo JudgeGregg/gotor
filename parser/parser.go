@@ -223,127 +223,23 @@ func getAmount(amountField string) Amount {
 	split := strings.Split(amountField, " ")
 	//Heal, Charges or Energy
 	if len(split) <= 2 {
-		if len(split) == 1 {
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = quantityInt
-		} else {
-			amount.Altered = true
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			amount.Amount = quantityInt
-			effective := strings.ReplaceAll(split[1], "~", "")
-			effectiveInt, _ := strconv.ParseUint(effective, 10, 64)
-			amount.Effective = effectiveInt
-		}
-		return amount
+		return getAmountHealChargeEnergy(amount, split)
 	}
 	//Reflected Damage
 	if strings.Contains(amountField, globals.REFLECTEDID) {
-		if len(split) == 4 {
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = quantityInt
-			amount.DamageType = split[1]
-			damageTypeID := strings.Split(split[2], "(")[0]
-			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
-			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-			amount.DamageTypeID = damageTypeID
-			return amount
-		}
-		if len(split) == 5 {
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			effective := strings.ReplaceAll(split[1], "~", "")
-			effectiveInt, _ := strconv.ParseUint(effective, 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = effectiveInt
-			amount.Altered = true
-			amount.DamageType = split[2]
-			damageTypeID := strings.Split(split[3], "(")[0]
-			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
-			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-			amount.DamageTypeID = damageTypeID
-			return amount
-		}
+		return getAmountDamageReflected(amount, split)
 	}
 	//Damage
 	if len(split) == 3 {
-		if strings.Contains(amountField, globals.PARRYID) || strings.Contains(amountField, globals.DEFLECTID) || strings.Contains(amountField, globals.DODGEID) {
-			amount.Mitigated = true
-			amount.Mitigation = globals.DODGE_PARRY_DEFLECT
-			amount.Amount = 0
-			amount.Effective = 0
-		} else if strings.Contains(amountField, globals.MISSID) {
-			amount.Mitigated = true
-			amount.Mitigation = globals.MISS
-			amount.Amount = 0
-			amount.Effective = 0
-		} else if strings.Contains(amountField, globals.RESISTID) {
-			amount.Mitigated = true
-			amount.Mitigation = globals.RESIST
-			amount.Amount = 0
-			amount.Effective = 0
-		} else if strings.Contains(amountField, globals.IMMUNEID) {
-			amount.Mitigated = true
-			amount.Mitigation = globals.IMMUNE
-			amount.Amount = 0
-			amount.Effective = 0
-		} else {
-			//Regular Damage
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = quantityInt
-			amount.DamageType = split[1]
-			damageTypeID := strings.ReplaceAll(split[2], "{", "")
-			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-			amount.DamageTypeID = damageTypeID
-		}
-		return amount
+		return getAmountDamageRegular(amount, amountField, split)
 	}
 	if len(split) == 4 {
 		//Regular Damage Altered
-		amount.Altered = true
-		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-		alteredQuantity := strings.ReplaceAll(split[1], "~", "")
-		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
-		amount.Amount = quantityInt
-		amount.Effective = alteredQuantityInt
-		amount.DamageType = split[2]
-		damageTypeID := strings.ReplaceAll(split[3], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
-		return amount
+		return getAmountDamageAltered(amount, split)
 	}
 	//Bubbled Damage
 	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, globals.ABSORBID) {
-		if strings.Contains(amountField, globals.SHIELDID) {
-			//Shield
-			amount.Altered = true
-			amount.Mitigated = true
-			amount.Mitigation = globals.SHIELD
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			alteredQuantity := strings.ReplaceAll(split[1], "~", "")
-			alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = alteredQuantityInt
-			amount.DamageType = split[2]
-			damageTypeID := strings.ReplaceAll(split[3], "{", "")
-			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-			amount.DamageTypeID = damageTypeID
-			return amount
-		} else {
-			//No shield
-			amount.Altered = true
-			quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
-			alteredQuantity := strings.ReplaceAll(split[1], "~", "")
-			alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
-			amount.Amount = quantityInt
-			amount.Effective = alteredQuantityInt
-			amount.DamageType = split[2]
-			damageTypeID := strings.ReplaceAll(split[3], "{", "")
-			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-			amount.DamageTypeID = damageTypeID
-			return amount
-		}
+		return getAmountBubbled(amount, amountField, split)
 	}
 	//Shield but no bubble
 	if strings.Contains(amountField, globals.ABSORBID) {
@@ -372,4 +268,129 @@ func getAmount(amountField string) Amount {
 		return amount
 	}
 	panic("Parsing Error")
+}
+
+func getAmountBubbled(amount Amount, amountField string, split []string) Amount {
+	if strings.Contains(amountField, globals.SHIELDID) {
+		//Shield
+		amount.Altered = true
+		amount.Mitigated = true
+		amount.Mitigation = globals.SHIELD
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		alteredQuantity := strings.ReplaceAll(split[1], "~", "")
+		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = alteredQuantityInt
+		amount.DamageType = split[2]
+		damageTypeID := strings.ReplaceAll(split[3], "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+		return amount
+	} else {
+		//No shield
+		amount.Altered = true
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		alteredQuantity := strings.ReplaceAll(split[1], "~", "")
+		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = alteredQuantityInt
+		amount.DamageType = split[2]
+		damageTypeID := strings.ReplaceAll(split[3], "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+		return amount
+	}
+}
+
+func getAmountDamageAltered(amount Amount, split []string) Amount {
+	amount.Altered = true
+	quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+	alteredQuantity := strings.ReplaceAll(split[1], "~", "")
+	alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
+	amount.Amount = quantityInt
+	amount.Effective = alteredQuantityInt
+	amount.DamageType = split[2]
+	damageTypeID := strings.ReplaceAll(split[3], "{", "")
+	damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+	amount.DamageTypeID = damageTypeID
+	return amount
+}
+
+func getAmountDamageRegular(amount Amount, amountField string, split []string) Amount {
+	if strings.Contains(amountField, globals.PARRYID) || strings.Contains(amountField, globals.DEFLECTID) || strings.Contains(amountField, globals.DODGEID) {
+		amount.Mitigated = true
+		amount.Mitigation = globals.DODGE_PARRY_DEFLECT
+		amount.Amount = 0
+		amount.Effective = 0
+	} else if strings.Contains(amountField, globals.MISSID) {
+		amount.Mitigated = true
+		amount.Mitigation = globals.MISS
+		amount.Amount = 0
+		amount.Effective = 0
+	} else if strings.Contains(amountField, globals.RESISTID) {
+		amount.Mitigated = true
+		amount.Mitigation = globals.RESIST
+		amount.Amount = 0
+		amount.Effective = 0
+	} else if strings.Contains(amountField, globals.IMMUNEID) {
+		amount.Mitigated = true
+		amount.Mitigation = globals.IMMUNE
+		amount.Amount = 0
+		amount.Effective = 0
+	} else {
+		//Regular Damage
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = quantityInt
+		amount.DamageType = split[1]
+		damageTypeID := strings.ReplaceAll(split[2], "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+	}
+	return amount
+}
+
+func getAmountDamageReflected(amount Amount, split []string) Amount {
+	if len(split) == 4 {
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = quantityInt
+		amount.DamageType = split[1]
+		damageTypeID := strings.Split(split[2], "(")[0]
+		damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+		return amount
+	}
+	if len(split) == 5 {
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		effective := strings.ReplaceAll(split[1], "~", "")
+		effectiveInt, _ := strconv.ParseUint(effective, 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = effectiveInt
+		amount.Altered = true
+		amount.DamageType = split[2]
+		damageTypeID := strings.Split(split[3], "(")[0]
+		damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+		return amount
+	}
+	return amount
+}
+
+func getAmountHealChargeEnergy(amount Amount, split []string) Amount {
+	if len(split) == 1 {
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = quantityInt
+	} else {
+		amount.Altered = true
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		amount.Amount = quantityInt
+		effective := strings.ReplaceAll(split[1], "~", "")
+		effectiveInt, _ := strconv.ParseUint(effective, 10, 64)
+		amount.Effective = effectiveInt
+	}
+	return amount
 }
