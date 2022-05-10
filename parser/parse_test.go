@@ -44,7 +44,7 @@ var threatTestMap = map[string]uint64{"<25>": 25, "<aa>": 0}
 var areaEnteredTestMap = map[string]Record{
 	`[23:25:48.788] [@Zangyef#686674938948221|(125.67,35.44,5.02,55.10)|(338278/338278)] [] [] [AreaEntered {836045448953664}: Karagga's Palace {833571547775669} 8 Player Veteran {836045448953652}] (he4002) <v7.0.0b>`: {Actor: Actor{Name: "Zangyef", ID: "686674938948221"}, Effect: Effect{Event: "AreaEntered", EventID: "836045448953664", Action: "Karagga's Palace", ActionID: "833571547775669", Spec: "8 Player Veteran", SpecID: "836045448953652"}}}
 
-var actorTestMap = map[string]Actor{"[Gamorrean Palace Guard {2470959109898240}:38983000004090|(-13.81,7.33,0.24,20.99)|(56242/964970)]": Actor{Name: "Gamorrean Palace Guard", ID: "2470959109898240"}}
+var actorTestMap = map[string]Actor{"[Gamorrean Palace Guard {2470959109898240}:38983000004090|(-13.81,7.33,0.24,20.99)|(56242/964970)]": {Name: "Gamorrean Palace Guard", ID: "2470959109898240"}}
 
 func TestGetRecord(t *testing.T) {
 	for line, result := range recordTestMap {
@@ -97,7 +97,7 @@ func TestParse(t *testing.T) {
 	lines := make(chan string)
 	go func() { lines <- line1; lines <- line2; close(lines) }()
 	go Parse(lines, records)
-	for _ = range records {
+	for range records {
 		//Consume records
 	}
 }
