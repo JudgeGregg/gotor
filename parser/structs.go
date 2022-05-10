@@ -3,14 +3,13 @@ package parser
 import "time"
 
 type Record struct {
-	LineNumber int
-	DateTime   time.Time
-	Actor      Actor
-	Target     Target
-	Ability    Ability
-	Effect     Effect
-	Amount     Amount
-	Threat     uint64
+	DateTime time.Time
+	Actor    Actor
+	Target   Target
+	Ability  Ability
+	Effect   Effect
+	Amount   Amount
+	Threat   uint64
 }
 
 type Actor struct {
@@ -92,15 +91,19 @@ type TargetHealDict struct {
 }
 
 type AbilityDict struct {
-	ID                string
-	Name              string
-	DamageType        string
-	Hits              uint64
-	Critical          uint64
-	Amount            uint64
+	ID             string
+	Name           string
+	DamageType     string
+	Hits           uint64
+	Critical       uint64
+	Amount         uint64
+	MitigationDict MitigationDict
+}
+
+type MitigationDict struct {
 	Miss              uint64
 	Resist            uint64
-	Immune            uint64
 	DodgeParryDeflect uint64
 	Shield            uint64
+	Immune            uint64
 }

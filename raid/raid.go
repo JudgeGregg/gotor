@@ -108,25 +108,15 @@ func handleMitigation(ability *parser.AbilityDict, record parser.Record) {
 	if record.Amount.Mitigated {
 		switch record.Amount.Mitigation {
 		case globals.IMMUNE:
-			{
-				ability.Immune += 1
-			}
+			ability.MitigationDict.Immune += 1
 		case globals.RESIST:
-			{
-				ability.Resist += 1
-			}
+			ability.MitigationDict.Resist += 1
 		case globals.MISS:
-			{
-				ability.Miss += 1
-			}
+			ability.MitigationDict.Miss += 1
 		case globals.DODGE_PARRY_DEFLECT:
-			{
-				ability.DodgeParryDeflect += 1
-			}
+			ability.MitigationDict.DodgeParryDeflect += 1
 		case globals.SHIELD:
-			{
-				ability.Shield += 1
-			}
+			ability.MitigationDict.Shield += 1
 		}
 	}
 }
@@ -292,7 +282,7 @@ func showDetails(pull *parser.Pull) {
 		for target, targetDmgDict := range dmgDict.TargetDamageDict {
 			if target.Name == mainPlayerName {
 				for _, abilityDmgDict := range targetDmgDict.Ability {
-					log.Printf("%s %s %s %s %s Hits: %d, Amounts: %d Miss: %d, Dodge/Parry/Deflect: %d Shield: %d Resist: %d, Immune: %d\n", player.Name, player.ID, abilityDmgDict.ID, abilityDmgDict.Name, abilityDmgDict.DamageType, abilityDmgDict.Hits, abilityDmgDict.Amount, abilityDmgDict.Miss, abilityDmgDict.DodgeParryDeflect, abilityDmgDict.Shield, abilityDmgDict.Resist, abilityDmgDict.Immune)
+					log.Printf("%s %s %s %s %s Hits: %d, Amounts: %d Miss: %d, Dodge/Parry/Deflect: %d Shield: %d Resist: %d, Immune: %d\n", player.Name, player.ID, abilityDmgDict.ID, abilityDmgDict.Name, abilityDmgDict.DamageType, abilityDmgDict.Hits, abilityDmgDict.Amount, abilityDmgDict.MitigationDict.Miss, abilityDmgDict.MitigationDict.DodgeParryDeflect, abilityDmgDict.MitigationDict.Shield, abilityDmgDict.MitigationDict.Resist, abilityDmgDict.MitigationDict.Immune)
 				}
 			}
 

@@ -16,7 +16,6 @@ func Parse(lines chan string, records chan Record) {
 			continue
 		}
 		record := getRecord(line)
-		record.LineNumber = index
 		records <- record
 	}
 	close(records)
