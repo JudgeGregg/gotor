@@ -55,6 +55,7 @@ type Raid struct {
 	InPull      bool
 	CurrentPull *Pull
 	Difficulty  string
+	BubblerMap  BubblerMap
 }
 
 type Pull struct {
@@ -106,4 +107,11 @@ type MitigationDict struct {
 	DodgeParryDeflect uint64
 	Shield            uint64
 	Immune            uint64
+}
+
+type BubblerMap map[Actor]Bubbler
+
+type Bubbler struct {
+	CurrentBubbler  Actor
+	PreviousBubbler Actor
 }

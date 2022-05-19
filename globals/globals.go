@@ -9,8 +9,10 @@ const (
 	EXITCOMBATID  = "836045448945490"
 	AREAENTEREDID = "836045448953664"
 
-	DAMAGEID = "836045448945501"
-	HEALID   = "836045448945500"
+	DAMAGEID         = "836045448945501"
+	HEALID           = "836045448945500"
+	APPLY_EFFECT_ID  = "836045448945477"
+	REMOVE_EFFECT_ID = "836045448945478"
 
 	FOURPLAYERSTORY   = "836045448953658"
 	FOURPLAYERVETERAN = "836045448953657"
@@ -40,18 +42,22 @@ const (
 	SHIELDID = "836045448945509"
 
 	//Mitigations
-
-	DODGE_PARRY_DEFLECT uint64 = iota
-	MISS
-	RESIST
-	IMMUNE
-	SHIELD
+	DODGE_PARRY_DEFLECT = 1
+	MISS                = 2
+	RESIST              = 3
+	IMMUNE              = 4
+	SHIELD              = 5
 
 	//Damage Types
 	KINETICID   = "836045448940873"
 	ENERGYID    = "836045448940874"
 	ELEMENTALID = "836045448940875"
 	INTERNALID  = "836045448940876"
+
+	//Bubble Types
+	STATIC_BARRIERID  = "3411286364782592"
+	FORCE_ARMOURID    = "812736661422080"
+	EMERGENCY_POWERID = "4511704230658308"
 )
 
 var Targets = map[string]string{
@@ -130,12 +136,22 @@ var Targets = map[string]string{
 	"3279293429841920": "Enhanced Duneclaw",
 	"3279289134874624": "Enhanced Vrblther",
 	"3279310609711104": "The Vigilant",
-	//Czerka XXX
+	//Czerka Corporate Labs
 	//The Foundry
 	//The Esseles
+	//The Black Talon
+	//Lost Island
+	//Assault on Tython
+	//Korriban Incursion
+	//Battle of Rishi
+	//Legacy of the Rakata
 	//Nathema Conspiracy Master
 	//Ruins of Nul Master
 	//Spirit of Vengeance Master
+	//Directive 7 Master
+	//Maelstrom Prison Master
+	//Objective Meridian
+	//Secrets of the Enclave
 	//Blood Hunt Master
 	"3507051250581504": "Shae Vizla",
 	"3507029775745024": "Valk & Jos",

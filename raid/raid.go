@@ -30,6 +30,8 @@ func HandleRecord(raid *parser.Raid, record parser.Record) {
 		handleDamage(raid, record)
 	case globals.HEALID:
 		handleHeal(raid, record)
+	case globals.FORCE_ARMOURID, globals.STATIC_BARRIERID, globals.EMERGENCY_POWERID:
+		handleBubble(raid, record)
 	}
 	handleThreat(raid, record)
 }
@@ -48,6 +50,29 @@ func handleAreaEntered(raid *parser.Raid, record parser.Record) {
 		raid.Difficulty = globals.VETERAN
 	case globals.EIGHTPLAYERMASTER:
 		raid.Difficulty = globals.MASTER
+	}
+}
+
+func handleBubble(raid *parser.Raid, record parser.Record) {
+	currentBubbler := record.Actor
+	bubblee := parser.Actor(record.Target)
+	switch record.Effect.EventID {
+	case globals.APPLY_EFFECT_ID:
+		bubbler := parser.Bubbler{CurrentBubbler: currentBubbler}
+		if bubb, ok := raid.BubblerMap[bubblee]; ok {
+			bubbler.PreviousBubbler = bubb.CurrentBubbler
+		}
+		raid.BubblerMap[bubblee] = bubbler
+		//log.Printf("%s SET A BUBBLE ON %s, at %s! ", record.Actor.Name, record.Target.Name, record.DateTime)
+		//log.Printf("%v", raid.BubblerMap)
+	case globals.REMOVE_EFFECT_ID:
+		bubbler := parser.Bubbler{}
+		if bubb, ok := raid.BubblerMap[bubblee]; ok {
+			bubbler.PreviousBubbler = bubb.CurrentBubbler
+		}
+		raid.BubblerMap[bubblee] = bubbler
+		//log.Printf("BUBBLE SET BY %s ON %s EXPIRED, at %s! ", record.Actor.Name, record.Target.Name, record.DateTime)
+		//log.Printf("%v", raid.BubblerMap)
 	}
 }
 
@@ -102,6 +127,17 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 		actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		raid.CurrentPull.DamageDone[actor] = actorDmgDict
 	}
+	if record.Amount.Absorbed {
+		handleAbsorb(raid, record)
+	}
+}
+
+func handleAbsorb(_ *parser.Raid, record parser.Record) {
+	//log.Println(record.LineNumber, record.Actor.Name, record.Target.Name)
+	//log.Printf("RECORD ALTERED: %v", record.Amount)
+	//log.Printf("MITIGATED: %d", record.Amount.Mitigation)
+	//log.Printf("AMOUNT: %d", record.Amount.Amount)
+	//log.Printf("EFFECTIVE: %d", record.Amount.Effective)
 }
 
 func handleMitigation(ability *parser.AbilityDict, record parser.Record) {

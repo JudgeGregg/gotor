@@ -271,6 +271,7 @@ func getAmountBubbled(amount Amount, amountField string, split []string) Amount 
 	if strings.Contains(amountField, globals.SHIELDID) {
 		//Shield
 		amount.Altered = true
+		amount.Absorbed = true
 		amount.Mitigated = true
 		amount.Mitigation = globals.SHIELD
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
@@ -286,6 +287,7 @@ func getAmountBubbled(amount Amount, amountField string, split []string) Amount 
 	} else {
 		//No shield
 		amount.Altered = true
+		amount.Absorbed = true
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		alteredQuantity := strings.ReplaceAll(split[1], "~", "")
 		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)

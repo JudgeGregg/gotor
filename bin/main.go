@@ -34,7 +34,8 @@ func main() {
 	records := make(chan parser.Record)
 	go tail(*argFile, lines)
 	go parser.Parse(lines, records)
-	raid_ := &parser.Raid{}
+	bubblerMap := make(parser.BubblerMap)
+	raid_ := &parser.Raid{BubblerMap: bubblerMap}
 	for record := range records {
 		raid.HandleRecord(raid_, record)
 	}
