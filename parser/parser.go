@@ -70,13 +70,11 @@ func getRecord(line string) Record {
 }
 
 func getThreat(threat string) uint64 {
-	var threatInt uint64
+	var threatInt uint64 = 0
 	isNotDigit := func(c rune) bool { return c < '0' || c > '9' }
 	if (strings.IndexFunc(threat, isNotDigit)) == -1 {
 		threatInt, _ := strconv.ParseUint(threat, 10, 64)
 		return threatInt
-	} else {
-		threatInt = 0
 	}
 	return threatInt
 }

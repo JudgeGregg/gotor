@@ -60,6 +60,7 @@ func tail(filename string, lines chan string) {
 			tempLine += line
 			if strings.Contains(tempLine, "\n") {
 				str, _, _ = transform.String(transformer, tempLine)
+				str = strings.Trim(str, "\r\n")
 				lines <- str
 				tempLine = ""
 			}
