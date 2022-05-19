@@ -121,14 +121,29 @@ var Targets = map[string]string{
 	"3172567787503616": "Mavrix Varad",
 	"3250538623795200": "Gil",
 	"3158402985361408": "Ezeraline",
-	//Nathema Conspiracy Master
-	//Ruins of Nul Master
-	//Spirit of Vengeance Master
 	//False Emperor Master
 	"2511688284766208": "Darth Malgus",
 	"2511701169668096": "HK-47",
 	"2511709759602688": "Jindo Krey",
 	"2511761299210240": "Tregg the Destroyer",
+	//Czerka Core Meltdown Master
+	"3279293429841920": "Enhanced Duneclaw",
+	"3279289134874624": "Enhanced Vrblther",
+	"3279310609711104": "The Vigilant",
+	//Czerka XXX
+	//The Foundry
+	//The Esseles
+	//Nathema Conspiracy Master
+	//Ruins of Nul Master
+	//Spirit of Vengeance Master
+	//Blood Hunt Master
+	"3507051250581504": "Shae Vizla",
+	"3507029775745024": "Valk & Jos",
+	"3507034070712320": "Valk & Jos",
+	//Boarding Party Master
+	"2514497193377792": "HXI-54 Juggernaut",
+	"2514522963181568": "Sakan Do'nair",
+	"2514531553116160": "Commander Jorland",
 
 	/// Operations
 
@@ -149,8 +164,20 @@ var Targets = map[string]string{
 	"3013327580037120": "The Dread Guards",
 	"3013121421606912": "Kephess the Undying",
 	"3025220344479744": "The Terror from Beyond",
+	//Darvannis 8 Veteran
 	//The Dread Fortress 8 Master
 	"3303031714086912": "Nefra, Who Bars the Way",
+	"3153558262251520": "Dash'Roode",
+	"3152458750623744": "Titan 6",
+	"3154563284598784": "Thrasher",
+	"3157548286869504": "Operations Chief",
+	"3050663730741248": "Olok the Shadow",
+	"3156895451840512": "Cartel Warlords",
+	"3054400352288768": "Cartel Warlords",
+	"3054408942223360": "Cartel Warlords",
+	"3054404647256064": "Cartel Warlords",
+	"3067057620910080": "Dread Master Styrak",
+	"3152407211016192": "Dread Master Styrak",
 }
 
 var RaidStartDate = time.Time{}
