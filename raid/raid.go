@@ -55,7 +55,7 @@ func handleAreaEntered(raid *parser.Raid, record parser.Record) {
 
 func handleBubble(raid *parser.Raid, record parser.Record) {
 	currentBubbler := record.Actor
-	bubblee := parser.Actor(record.Target)
+	bubblee := record.Target
 	switch record.Effect.EventID {
 	case globals.APPLY_EFFECT_ID:
 		bubbler := parser.Bubbler{CurrentBubbler: currentBubbler}
@@ -122,7 +122,7 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: record.Amount.Effective, DamageType: record.Amount.DamageType, Hits: 1}
 		handleMitigation(ability, record)
 		targetDmgDict := &parser.TargetDamageDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
-		actorDmgDict := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[parser.Target]*parser.TargetDamageDict)}
+		actorDmgDict := &parser.DamageDict{Name: actorName, ID: actorID, TargetDamageDict: make(map[parser.Entity]*parser.TargetDamageDict)}
 		targetDmgDict.Ability[abilityName] = ability
 		actorDmgDict.TargetDamageDict[target] = targetDmgDict
 		raid.CurrentPull.DamageDone[actor] = actorDmgDict
@@ -204,7 +204,7 @@ func handleHeal(raid *parser.Raid, record parser.Record) {
 	} else {
 		ability := &parser.AbilityDict{Name: abilityName, ID: abilityID, Amount: abilityAmount}
 		targetHeaDict := &parser.TargetHealDict{Name: targetName, ID: targetID, Ability: make(map[string]*parser.AbilityDict)}
-		heaDict := &parser.HealDict{Name: actorName, ID: actorID, TargetHealDict: make(map[parser.Target]*parser.TargetHealDict)}
+		heaDict := &parser.HealDict{Name: actorName, ID: actorID, TargetHealDict: make(map[parser.Entity]*parser.TargetHealDict)}
 		targetHeaDict.Ability[abilityName] = ability
 		heaDict.TargetHealDict[target] = targetHeaDict
 		raid.CurrentPull.HealDone[actor] = heaDict
@@ -216,8 +216,8 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		//start pull
 		raid.CurrentPull = &parser.Pull{}
 		raid.CurrentPull.StartTime = record.DateTime
-		damageDone := make(map[parser.Actor]*parser.DamageDict)
-		healDone := make(map[parser.Actor]*parser.HealDict)
+		damageDone := make(map[parser.Entity]*parser.DamageDict)
+		healDone := make(map[parser.Entity]*parser.HealDict)
 		threatDone := make(map[string]uint64)
 		raid.CurrentPull.DamageDone = damageDone
 		raid.CurrentPull.HealDone = healDone
@@ -250,26 +250,24 @@ func showDamage(pull *parser.Pull) {
 	if pull.Target == "" && !globals.Debug {
 		return
 	}
-	log.Printf("==============================")
-	log.Printf("STARTING FIGHT %s", pull.StartTime)
 	duration := pull.StopTime.Sub(pull.StartTime)
 	seconds := duration.Seconds()
-	log.Println(duration)
-	log.Println(pull.Target)
-	log.Println("------------------------------")
-	log.Println("DAMAGE DONE")
 
-	receivedMap := make(map[parser.Target]float64)
+	doneMap := make(parser.StatsMap)
+	receivedMap := make(parser.StatsMap)
+	healMap := make(parser.StatsMap)
 	for player, dmgDict := range pull.DamageDone {
 		if !player.NPC && player.Name != "" {
+			// Damage Done
 			totalDamage := float64(0)
 			for _, targetDmgDict := range dmgDict.TargetDamageDict {
 				for _, abilityDmgDict := range targetDmgDict.Ability {
 					totalDamage += float64(abilityDmgDict.Amount)
 				}
 			}
-			log.Println(player.Name, totalDamage, "Total", totalDamage/seconds, "DPS")
+			doneMap[player] = totalDamage
 		} else {
+			// Damage Received
 			for target, targetDmgDict := range dmgDict.TargetDamageDict {
 				if !target.NPC {
 					for _, abilityDmgDict := range targetDmgDict.Ability {
@@ -279,13 +277,6 @@ func showDamage(pull *parser.Pull) {
 			}
 		}
 	}
-	log.Println("------------------------------")
-	log.Println("DAMAGE RECEIVED")
-	for target, amount := range receivedMap {
-		log.Println(target.Name, amount, "Total", amount/seconds, "DPS")
-	}
-	log.Println("------------------------------")
-	log.Println("HEAL DONE")
 	for player, healDict := range pull.HealDone {
 		if !player.NPC {
 			totalHeal := float64(0)
@@ -294,8 +285,33 @@ func showDamage(pull *parser.Pull) {
 					totalHeal += float64(abilityDmgDict.Amount)
 				}
 			}
-			log.Println(player.Name, totalHeal, "Total", totalHeal/seconds, "HPS")
+			healMap[player] = totalHeal
 		}
+	}
+	log.Printf("==============================")
+	log.Printf("STARTING FIGHT %s", pull.StartTime)
+	log.Println(duration)
+	log.Println(pull.Target)
+	log.Println("------------------------------")
+	log.Println("DAMAGE DONE")
+	sorted := doneMap.Sort()
+	for _, player := range sorted {
+		amount := doneMap[player]
+		log.Println(player.Name, amount, "Total", amount/seconds, "DPS")
+	}
+	log.Println("------------------------------")
+	log.Println("DAMAGE RECEIVED")
+	sorted = receivedMap.Sort()
+	for _, player := range sorted {
+		amount := receivedMap[player]
+		log.Println(player.Name, amount, "Total", amount/seconds, "DPS")
+	}
+	log.Println("------------------------------")
+	log.Println("HEAL DONE")
+	sorted = healMap.Sort()
+	for _, player := range sorted {
+		amount := healMap[player]
+		log.Println(player.Name, amount, "Total", amount/seconds, "HPS")
 	}
 	log.Println("------------------------------")
 	log.Printf("STOPPING FIGHT %s", pull.StopTime)

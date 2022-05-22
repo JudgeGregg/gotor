@@ -1,28 +1,28 @@
 package parser
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 type Record struct {
 	DateTime time.Time
-	Actor    Actor
-	Target   Target
+	Actor    Entity
+	Target   Entity
 	Ability  Ability
 	Effect   Effect
 	Amount   Amount
 	Threat   uint64
 }
 
-type Actor struct {
+type Entity struct {
 	Name string
 	NPC  bool
 	ID   string
 }
 
-type Target struct {
-	Name string
-	NPC  bool
-	ID   string
-}
+type Actor Entity
+type Target Entity
 
 type Ability struct {
 	Name string
@@ -62,15 +62,15 @@ type Pull struct {
 	StartTime  time.Time
 	StopTime   time.Time
 	Target     string
-	DamageDone map[Actor]*DamageDict
-	HealDone   map[Actor]*HealDict
+	DamageDone map[Entity]*DamageDict
+	HealDone   map[Entity]*HealDict
 	ThreatDone map[string]uint64
 }
 
 type DamageDict struct {
 	ID               string
 	Name             string
-	TargetDamageDict map[Target]*TargetDamageDict
+	TargetDamageDict map[Entity]*TargetDamageDict
 }
 
 type TargetDamageDict struct {
@@ -82,7 +82,7 @@ type TargetDamageDict struct {
 type HealDict struct {
 	ID             string
 	Name           string
-	TargetHealDict map[Target]*TargetHealDict
+	TargetHealDict map[Entity]*TargetHealDict
 }
 
 type TargetHealDict struct {
@@ -109,9 +109,23 @@ type MitigationDict struct {
 	Immune            uint64
 }
 
-type BubblerMap map[Actor]Bubbler
+type BubblerMap map[Entity]Bubbler
 
 type Bubbler struct {
-	CurrentBubbler  Actor
-	PreviousBubbler Actor
+	CurrentBubbler  Entity
+	PreviousBubbler Entity
+}
+
+type StatsMap map[Entity]float64
+
+func (sm *StatsMap) Sort() []Entity {
+	sortedValues := []Entity{}
+	map_ := map[Entity]float64(*sm)
+	for name := range *sm {
+		sortedValues = append(sortedValues, name)
+	}
+	sort.SliceStable(sortedValues, func(i, j int) bool {
+		return map_[sortedValues[i]] > map_[sortedValues[j]]
+	})
+	return sortedValues
 }

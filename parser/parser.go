@@ -50,14 +50,14 @@ func getRecord(line string) Record {
 	}
 
 	fields := strings.Split(line, "] [")
-	var target Target
+	var target Entity
 	firstField := fields[0]
 	time_ := getTime(firstField)
 	actorField := fields[1]
 	actor := getActor(actorField)
 	targetField := fields[2]
 	if targetField == "=" {
-		target = Target(actor)
+		target = actor
 	} else {
 		target = getTarget(targetField)
 	}
@@ -91,8 +91,8 @@ func getTime(time_ string) time.Time {
 	return res
 }
 
-func getActor(actorField string) Actor {
-	actor := Actor{}
+func getActor(actorField string) Entity {
+	actor := Entity{}
 	if actorField == "" {
 		return actor
 	}
@@ -122,8 +122,8 @@ func getActor(actorField string) Actor {
 	return actor
 }
 
-func getTarget(targetField string) Target {
-	target := Target{}
+func getTarget(targetField string) Entity {
+	target := Entity{}
 	if targetField == "" {
 		return target
 	}
