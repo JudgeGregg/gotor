@@ -245,10 +245,12 @@ func getAmount(amountField string) Amount {
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = quantityInt
-		amount.DamageType = split[1]
-		damageTypeID := strings.ReplaceAll(split[2], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[1]
+			damageTypeID := strings.ReplaceAll(split[2], "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	}
 	//Shield but no absorb, bug ?
@@ -258,10 +260,12 @@ func getAmount(amountField string) Amount {
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = quantityInt
-		amount.DamageType = split[1]
-		damageTypeID := strings.ReplaceAll(split[2], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[1]
+			damageTypeID := strings.ReplaceAll(split[2], "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	}
 	panic("Parsing Error")
@@ -279,10 +283,12 @@ func getAmountBubbled(amount Amount, amountField string, split []string) Amount 
 		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = alteredQuantityInt
-		amount.DamageType = split[2]
-		damageTypeID := strings.ReplaceAll(split[3], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[2]
+			damageTypeID := strings.ReplaceAll(split[3], "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	} else {
 		//No shield
@@ -293,10 +299,12 @@ func getAmountBubbled(amount Amount, amountField string, split []string) Amount 
 		alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = alteredQuantityInt
-		amount.DamageType = split[2]
-		damageTypeID := strings.ReplaceAll(split[3], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[2]
+			damageTypeID := strings.ReplaceAll(split[3], "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	}
 }
@@ -308,10 +316,12 @@ func getAmountDamageAltered(amount Amount, split []string) Amount {
 	alteredQuantityInt, _ := strconv.ParseUint(alteredQuantity, 10, 64)
 	amount.Amount = quantityInt
 	amount.Effective = alteredQuantityInt
-	amount.DamageType = split[2]
-	damageTypeID := strings.ReplaceAll(split[3], "{", "")
-	damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-	amount.DamageTypeID = damageTypeID
+	if quantityInt != 0 {
+		amount.DamageType = split[2]
+		damageTypeID := strings.ReplaceAll(split[3], "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+	}
 	return amount
 }
 
@@ -341,10 +351,12 @@ func getAmountDamageRegular(amount Amount, amountField string, split []string) A
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = quantityInt
-		amount.DamageType = split[1]
-		damageTypeID := strings.ReplaceAll(split[2], "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[1]
+			damageTypeID := strings.ReplaceAll(split[2], "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 	}
 	return amount
 }
@@ -354,11 +366,13 @@ func getAmountDamageReflected(amount Amount, split []string) Amount {
 		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
 		amount.Amount = quantityInt
 		amount.Effective = quantityInt
-		amount.DamageType = split[1]
-		damageTypeID := strings.Split(split[2], "(")[0]
-		damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[1]
+			damageTypeID := strings.Split(split[2], "(")[0]
+			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	}
 	if len(split) == 5 {
@@ -368,11 +382,13 @@ func getAmountDamageReflected(amount Amount, split []string) Amount {
 		amount.Amount = quantityInt
 		amount.Effective = effectiveInt
 		amount.Altered = true
-		amount.DamageType = split[2]
-		damageTypeID := strings.Split(split[3], "(")[0]
-		damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
-		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
-		amount.DamageTypeID = damageTypeID
+		if quantityInt != 0 {
+			amount.DamageType = split[2]
+			damageTypeID := strings.Split(split[3], "(")[0]
+			damageTypeID = strings.ReplaceAll(damageTypeID, "{", "")
+			damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+			amount.DamageTypeID = damageTypeID
+		}
 		return amount
 	}
 	return amount
