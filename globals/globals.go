@@ -139,10 +139,13 @@ var Targets = map[string]string{
 	//Czerka Corporate Labs
 	//The Foundry
 	//The Esseles
-	//The Black Talon
+	//Black Talon
 	//Lost Island
 	//Assault on Tython
 	//Korriban Incursion
+	"3468753027203072": "Master Riilna",
+	"3468748732235776": "R-9XR",
+	"3468757322170368": "Commander Jensyn",
 	//Battle of Rishi
 	//Legacy of the Rakata
 	//Nathema Conspiracy Master
@@ -150,8 +153,13 @@ var Targets = map[string]string{
 	//Spirit of Vengeance Master
 	//Directive 7 Master
 	//Maelstrom Prison Master
-	//Objective Meridian
-	//Secrets of the Enclave
+	//Objective Meridian Master
+	"4257467936538624": "R10-X6",
+	"4258185196077056": "Commander Rasha",
+	"4257463641571328": "Tau Idair",
+	"4257455051636736": "Seldin & Master Jakir Halcyon",
+	"4257442166734848": "Seldin & Master Jakir Halcyon",
+	//Secrets of the Enclave Master
 	//Blood Hunt Master
 	"3507051250581504": "Shae Vizla",
 	"3507029775745024": "Valk & Jos",
