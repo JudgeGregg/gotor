@@ -26,6 +26,7 @@ var amountTestMap = map[string]Amount{
 	`0 -resist {836045448945507}`:  {Mitigated: true, Mitigation: globals.RESIST, Amount: 0, Effective: 0},
 	`0 -immune {836045448945506}`:  {Mitigated: true, Mitigation: globals.IMMUNE, Amount: 0, Effective: 0},
 	`0 -miss {836045448945502}`:    {Mitigated: true, Mitigation: globals.MISS, Amount: 0, Effective: 0},
+	`0 -shield {836045448945509}`:  {Mitigated: true, Mitigation: globals.SHIELD, Amount: 0, Effective: 0},
 	`525 ~0 energy {836045448940874} -shield {836045448945509} (525 absorbed {836045448945511})`: {Absorbed: true, Altered: true, Mitigated: true, Mitigation: globals.SHIELD, DamageType: "energy", DamageTypeID: "836045448940874", Amount: 525, Effective: 0},
 	`11053 kinetic {836045448940873}`:                                  {Amount: 11053, Effective: 11053, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
 	`11053 ~11055 kinetic {836045448940873}`:                           {Altered: true, Amount: 11053, Effective: 11055, DamageType: "kinetic", DamageTypeID: globals.KINETICID},
@@ -76,7 +77,7 @@ func TestGetAmount(t *testing.T) {
 	for line, result := range amountTestMap {
 		amount := getAmount(line)
 		if amount != result {
-			t.Logf("Invalid amount: %v is not %v", amount, result)
+			t.Logf("Invalid amount: %#v is not %#v", amount, result)
 			t.Fail()
 		}
 	}
