@@ -64,7 +64,8 @@ type Pull struct {
 	Target     string
 	DamageDone map[Entity]*DamageDict
 	HealDone   map[Entity]*HealDict
-	ThreatDone map[string]uint64
+	ThreatDone map[string]float64
+	AbsDone    map[Entity]float64
 }
 
 type DamageDict struct {

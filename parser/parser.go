@@ -251,6 +251,23 @@ func getAmount(amountField string) Amount {
 		amount.DamageTypeID = damageTypeID
 		return amount
 	}
+	//Shield but no absorb, BUG ?
+	if strings.Contains(amountField, globals.SHIELDID) {
+		amount.Mitigated = true
+		amount.Mitigation = globals.SHIELD
+		quantityInt, _ := strconv.ParseUint(split[0], 10, 64)
+		amount.Amount = quantityInt
+		amount.Effective = quantityInt
+		amount.DamageType = split[1]
+		damageTypeID := strings.ReplaceAll(split[2], "{", "")
+		damageTypeID = strings.ReplaceAll(damageTypeID, "}", "")
+		amount.DamageTypeID = damageTypeID
+		return amount
+	}
+	//Altered damage but immune, BUG ?
+	if strings.ContainsAny(amountField, "~") && strings.Contains(amountField, globals.IMMUNEID) {
+		return amount
+	}
 	panic("Parsing Error")
 }
 

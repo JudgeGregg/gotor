@@ -2,6 +2,7 @@ package raid
 
 import (
 	"log"
+	"math"
 	"strings"
 	"time"
 
@@ -30,7 +31,7 @@ func HandleRecord(raid *parser.Raid, record parser.Record) {
 		handleDamage(raid, record)
 	case globals.HEALID:
 		handleHeal(raid, record)
-	case globals.FORCE_ARMOURID, globals.STATIC_BARRIERID, globals.EMERGENCY_POWERID:
+	case globals.FORCE_ARMOURID, globals.STATIC_BARRIERID, globals.EMERGENCY_POWERID, globals.ABSORB_SHIELDID, globals.SABER_WARD_GID, globals.SABER_WARD_JID, globals.SONIC_BARRIERID, globals.SHIELD_PROBEID, globals.BALLISTIC_DAMPERSID, globals.ENERGY_REDOUBTID, globals.BLADE_BARRIERID:
 		handleBubble(raid, record)
 	}
 	handleThreat(raid, record)
@@ -57,7 +58,7 @@ func handleBubble(raid *parser.Raid, record parser.Record) {
 	currentBubbler := record.Actor
 	bubblee := record.Target
 	switch record.Effect.EventID {
-	case globals.APPLY_EFFECT_ID:
+	case globals.APPLY_EFFECTID:
 		bubbler := parser.Bubbler{CurrentBubbler: currentBubbler}
 		if bubb, ok := raid.BubblerMap[bubblee]; ok {
 			bubbler.PreviousBubbler = bubb.CurrentBubbler
@@ -65,14 +66,18 @@ func handleBubble(raid *parser.Raid, record parser.Record) {
 		raid.BubblerMap[bubblee] = bubbler
 		//log.Printf("%s SET A BUBBLE ON %s, at %s! ", record.Actor.Name, record.Target.Name, record.DateTime)
 		//log.Printf("%v", raid.BubblerMap)
-	case globals.REMOVE_EFFECT_ID:
+	case globals.REMOVE_EFFECTID:
 		bubbler := parser.Bubbler{}
 		if bubb, ok := raid.BubblerMap[bubblee]; ok {
-			bubbler.PreviousBubbler = bubb.CurrentBubbler
+			if bubb.CurrentBubbler.Name == "" {
+				bubbler.PreviousBubbler = bubb.PreviousBubbler
+			} else {
+				bubbler.PreviousBubbler = bubb.CurrentBubbler
+			}
 		}
 		raid.BubblerMap[bubblee] = bubbler
 		//log.Printf("BUBBLE SET BY %s ON %s EXPIRED, at %s! ", record.Actor.Name, record.Target.Name, record.DateTime)
-		//log.Printf("%v", raid.BubblerMap)
+		//log.Printf("%#v", raid.BubblerMap)
 	}
 }
 
@@ -132,12 +137,22 @@ func handleDamage(raid *parser.Raid, record parser.Record) {
 	}
 }
 
-func handleAbsorb(_ *parser.Raid, record parser.Record) {
-	//log.Println(record.LineNumber, record.Actor.Name, record.Target.Name)
-	//log.Printf("RECORD ALTERED: %v", record.Amount)
-	//log.Printf("MITIGATED: %d", record.Amount.Mitigation)
-	//log.Printf("AMOUNT: %d", record.Amount.Amount)
-	//log.Printf("EFFECTIVE: %d", record.Amount.Effective)
+func handleAbsorb(raid *parser.Raid, record parser.Record) {
+	if math.Abs(float64(record.Amount.Effective-record.Amount.Amount)) <= 1.0 {
+		//Weird +1 delta, ignore BUG ?
+		return
+	}
+	target := record.Target
+	bubbler := raid.BubblerMap[target].CurrentBubbler
+	if bubbler.Name == "" {
+		bubbler = raid.BubblerMap[target].PreviousBubbler
+	}
+	if bubbler.Name == "" {
+		bubbler = raid.BubblerMap[target].PreviousBubbler
+		log.Printf("%s took %d,  absorbed %d, at %s\n", record.Target.Name, record.Amount.Amount, record.Amount.Amount-record.Amount.Effective, record.DateTime)
+	}
+	absDone := raid.CurrentPull.AbsDone
+	absDone[bubbler] += float64(record.Amount.Amount - record.Amount.Effective)
 }
 
 func handleMitigation(ability *parser.AbilityDict, record parser.Record) {
@@ -162,7 +177,7 @@ func handleThreat(raid *parser.Raid, record parser.Record) {
 		//log.Println("THREAT NOT IN RAID", record.LineNumber)
 		return
 	}
-	raid.CurrentPull.ThreatDone[record.Actor.Name] += record.Threat
+	raid.CurrentPull.ThreatDone[record.Actor.Name] += float64(record.Threat)
 }
 
 func handleHeal(raid *parser.Raid, record parser.Record) {
@@ -218,10 +233,12 @@ func handleStartStop(raid *parser.Raid, record parser.Record) {
 		raid.CurrentPull.StartTime = record.DateTime
 		damageDone := make(map[parser.Entity]*parser.DamageDict)
 		healDone := make(map[parser.Entity]*parser.HealDict)
-		threatDone := make(map[string]uint64)
+		absDone := make(map[parser.Entity]float64)
+		threatDone := make(map[string]float64)
 		raid.CurrentPull.DamageDone = damageDone
 		raid.CurrentPull.HealDone = healDone
 		raid.CurrentPull.ThreatDone = threatDone
+		raid.CurrentPull.AbsDone = absDone
 		raid.InPull = true
 		//log.Printf("%d Starting fight %s", record.LineNumber, raid.CurrentPull.StartTime)
 	}
@@ -312,6 +329,14 @@ func showDamage(pull *parser.Pull) {
 	for _, player := range sorted {
 		amount := healMap[player]
 		log.Println(player.Name, amount, "Total", amount/seconds, "HPS")
+	}
+	log.Println("------------------------------")
+	log.Println("ABSORB DONE")
+	maps := parser.StatsMap(pull.AbsDone)
+	absDone := maps.Sort()
+	for _, player := range absDone {
+		amount := pull.AbsDone[player]
+		log.Println(player.Name, amount, "Total", amount/seconds, "APS")
 	}
 	log.Println("------------------------------")
 	log.Printf("STOPPING FIGHT %s", pull.StopTime)
