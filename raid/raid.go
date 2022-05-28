@@ -31,7 +31,7 @@ func HandleRecord(raid *parser.Raid, record parser.Record) {
 		handleDamage(raid, record)
 	case globals.HEALID:
 		handleHeal(raid, record)
-	case globals.FORCE_ARMOURID, globals.STATIC_BARRIERID, globals.EMERGENCY_POWERID, globals.ABSORB_SHIELDID, globals.SABER_WARD_GID, globals.SABER_WARD_JID, globals.SONIC_BARRIERID, globals.SHIELD_PROBEID, globals.BALLISTIC_DAMPERSID, globals.ENERGY_REDOUBTID, globals.BLADE_BARRIERID:
+	case globals.FORCE_ARMOURID, globals.STATIC_BARRIERID, globals.EMERGENCY_POWERID, globals.ABSORB_SHIELDID, globals.SABER_WARD_GID, globals.SABER_WARD_JID, globals.SONIC_BARRIERID, globals.SHIELD_PROBEID, globals.BALLISTIC_DAMPERSID, globals.ENERGY_REDOUBT_PID, globals.ENERGY_REDOUBT_VID, globals.BLADE_BARRIERID:
 		handleBubble(raid, record)
 	}
 	handleThreat(raid, record)
