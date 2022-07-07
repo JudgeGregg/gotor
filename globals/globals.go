@@ -206,14 +206,14 @@ var Targets = map[string]string{
 	"2857549116211200": "Zorn & Toth",
 	"2876434087411712": "Firebrand & Stormcaller",
 	"2876438382379008": "Firebrand & Stormcaller",
+	"2854151797080064": "Colonel Vorgath",
+	"2876532871659520": "Warlord Kephess",
 	//Asation 8 Veteran
 	"3010424182145024": "The Writhing Horror",
 	"2994837745827840": "Operator IX",
 	"3013327580037120": "The Dread Guards",
 	"3013121421606912": "Kephess the Undying",
 	"3025220344479744": "The Terror from Beyond",
-	//The Dread Fortress 8 Master
-	"3303031714086912": "Nefra, Who Bars the Way",
 	//Darvannis 8 Veteran
 	"3153558262251520": "Dash'Roode",
 	"3152458750623744": "Titan 6",
@@ -226,6 +226,18 @@ var Targets = map[string]string{
 	"3054404647256064": "Cartel Warlords",
 	"3067057620910080": "Dread Master Styrak",
 	"3152407211016192": "Dread Master Styrak",
+	//The Dread Fortress 8 Veteran
+	"3303031714086912": "Nefra, Who Bars the Way",
+	"3303392491339776": "Gate Commander Draxus",
+	"3302559267684352": "Grob'thok, Who Feeds the Forge",
+	"3303534225260544": "Corruptor Zero",
+	"3303529930293248": "Dread Master Brontes",
+	//The Dread Palace 8 Veteran
+	"3273941900591104": "Dread Master Bestia",
+	"3273954785492992": "Dread Master Tyrans",
+	"3273946195558400": "Dread Master Calphayus",
+	//The Dread Fortress 8 Master (duplicate with Vet mode ?)
+	//"3303031714086912": "Nefra, Who Bars the Way",
 }
 
 var RaidStartDate = time.Time{}
