@@ -149,7 +149,7 @@ func handleAbsorb(raid *parser.Raid, record parser.Record) {
 	}
 	if bubbler.Name == "" {
 		bubbler = raid.BubblerMap[target].PreviousBubbler
-		log.Printf("%s took %d,  absorbed %d, at %s\n", record.Target.Name, record.Amount.Amount, record.Amount.Amount-record.Amount.Effective, record.DateTime)
+		//log.Printf("%s took %d,  absorbed %d, at %s\n", record.Target.Name, record.Amount.Amount, record.Amount.Amount-record.Amount.Effective, record.DateTime)
 	}
 	absDone := raid.CurrentPull.AbsDone
 	absDone[bubbler] += float64(record.Amount.Amount - record.Amount.Effective)
@@ -314,21 +314,21 @@ func showDamage(pull *parser.Pull) {
 	sorted := doneMap.Sort()
 	for _, player := range sorted {
 		amount := doneMap[player]
-		log.Println(player.Name, amount, "Total", amount/seconds, "DPS")
+		log.Printf("%s: %.1f DPS", player.Name, amount/seconds)
 	}
 	log.Println("------------------------------")
 	log.Println("DAMAGE RECEIVED")
 	sorted = receivedMap.Sort()
 	for _, player := range sorted {
 		amount := receivedMap[player]
-		log.Println(player.Name, amount, "Total", amount/seconds, "DPS")
+		log.Printf("%s: %.1f DPS", player.Name, amount/seconds)
 	}
 	log.Println("------------------------------")
 	log.Println("HEAL DONE")
 	sorted = healMap.Sort()
 	for _, player := range sorted {
 		amount := healMap[player]
-		log.Println(player.Name, amount, "Total", amount/seconds, "HPS")
+		log.Printf("%s: %.1f HPS", player.Name, amount/seconds)
 	}
 	log.Println("------------------------------")
 	log.Println("ABSORB DONE")
@@ -336,7 +336,7 @@ func showDamage(pull *parser.Pull) {
 	absDone := maps.Sort()
 	for _, player := range absDone {
 		amount := pull.AbsDone[player]
-		log.Println(player.Name, amount, "Total", amount/seconds, "APS")
+		log.Printf("%s: %.1f APS", player.Name, amount/seconds)
 	}
 	log.Println("------------------------------")
 	log.Printf("STOPPING FIGHT %s", pull.StopTime)
